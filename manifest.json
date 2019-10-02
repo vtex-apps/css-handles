@@ -1,9 +1,9 @@
 {
-  "vendor": "CHANGE_ME",
-  "name": "CHANGE_ME",
+  "vendor": "vtex",
+  "name": "css-handles",
   "version": "0.0.0",
-  "title": "CHANGE_ME",
-  "description": "CHANGE_ME",
+  "title": "CSS Handles",
+  "description": "Utility for creating CSS Handles on store components",
   "builders": {
     "react": "3.x",
     "messages": "1.x",
