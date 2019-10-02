@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { generateBlockClass } from '@vtex/css-handles'
 import { useExtension } from './hooks/useExtension'
 
-/** Verifies if the handle contains only letters and numbers, and begins with a number  */
+/** Verifies if the handle contains only letters and numbers, and does not begin with a number  */
 const validateCssHandle = (handle: string) => !/^\d|[^A-z0-9]/.test(handle)
 
 /**
