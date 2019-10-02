@@ -8,9 +8,8 @@ const validateCssHandle = (handle: string) => !/^\d|[^A-z0-9]/.test(handle)
 /**
  * Useful for creating CSS handles without creating a CSS file with empty
  * declarations.
- * Receives an array of strings (e.g. ['foo', 'bar']) or an enum
- * (e.g. enum Handles {foo, bar}) and returns and object with
- * generated css class names. For example:
+ * Receives an array of strings (e.g. ['foo', 'bar']) and returns an
+ * object with generated css class names, e.g.
  * { foo: 'vendor-appname-1-x-foo', bar: 'vendor-appname-1-x-bar' }.
  */
 const useCssHandles = <T extends CssHandlesInput>(
@@ -18,35 +17,33 @@ const useCssHandles = <T extends CssHandlesInput>(
 ): CssHandles<T> => {
   const extension = useExtension()
 
-  const { props, component = '' } = extension || {}
+  const { props = {}, component = '' } = extension || {}
 
   const values = useMemo<CssHandles<T>>(() => {
-    const vendor = component.slice(0, component.indexOf('.'))
-    const name = component.slice(
-      component.indexOf('.') + 1,
-      component.indexOf('@')
-    )
-    const version = component.slice(
-      component.indexOf('@') + 1,
-      component.indexOf('/')
-    )
-    const major = version.slice(0, version.indexOf('.'))
+    /* Matches until the first `.` or `@`.
+     * Used to split something like `vtex.style-guide@2.0.1` into
+     * `vtex`, `style-guide`, and `2`. */
+    const split = /[^@.]+/g
 
-    const customHandle = props && (props.cssHandle || props.blockClass)
-    const namespace = `${vendor}-${name}-${major}-x`
+    /* regex.exec is stateful, this is why running the command 3 times
+     * provides 3 different results. Yeah I know.
+     * There exists a `String.matchAll()` function but it's not
+     * supported on Safari */
+    const [vendor] = split.exec(component) || [null]
+    const [name] = split.exec(component) || [null]
+    const [major] = split.exec(component) || [null]
 
-    // Intended for when the input is an Enum. Converts it to an array of its keys
-    const normalizedHandles: string[] = Array.isArray(handles)
-      ? handles
-      : Object.keys(handles)
+    const namespace = vendor && name && major && `${vendor}-${name}-${major}-x`
 
-    return normalizedHandles.reduce<Record<string, string>>((acc, handle) => {
-      const fullHandle = `${namespace}-${handle}`
-      if (validateCssHandle) {
-        acc[handle] = namespace
-          ? generateBlockClass(fullHandle, customHandle)
-          : ''
-      } else {
+    const blockClass = props.cssHandle || props.blockClass
+
+    return handles.reduce<Record<string, string>>((acc, handle) => {
+      const isValid = !!namespace && validateCssHandle(handle)
+      acc[handle] = isValid
+        ? generateBlockClass(`${namespace}-${handle}`, blockClass)
+        : ''
+
+      if (!isValid) {
         console.error(
           `Invalid CSS handle "${handle}". It should only contain letters or numbers, and should start with a letter.`
         )
@@ -61,9 +58,7 @@ const useCssHandles = <T extends CssHandlesInput>(
 
 type ValueOf<T extends readonly any[]> = T[number]
 
-type CssHandlesInput = readonly string[] | Record<string, any>
-type CssHandles<T extends CssHandlesInput> = T extends readonly string[]
-  ? Record<ValueOf<T>, string>
-  : Record<keyof T, string>
+type CssHandlesInput = readonly string[]
+type CssHandles<T extends CssHandlesInput> = Record<ValueOf<T>, string>
 
 export default useCssHandles
