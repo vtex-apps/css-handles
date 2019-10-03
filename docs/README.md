@@ -43,6 +43,6 @@ const Component: FunctionComponent = () => {
 #### Usage:
 ```tsx
 const CSS_HANDLES = ['container']
-const handles = useCssHandles(CSS_HANDLES, { migrationFrom: 'vtex.store-components@2.x' })
-// Returns { container: 'vtex-current-app-0-x-container vtex-store-components-2-x-container' }
+const handles = useCssHandles(CSS_HANDLES, { migrationFrom: 'vtex.store-components@3.x' })
+// Returns { container: 'vtex-current-app-0-x-container vtex-store-components-3-x-container' }
 ```
