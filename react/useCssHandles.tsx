@@ -9,11 +9,7 @@ interface CssHandlesOptions {
   migrationFrom?: string | string[]
 }
 
-const generateCssHandles = <T extends CssHandlesInput>(
-  component: string,
-  handles: T,
-  modifiers?: string | string[]
-) => {
+const parseComponentName = (componentName: string) => {
   /* Matches until the first `.` or `@`.
    * Used to split something like `vtex.style-guide@2.0.1` into
    * `vtex`, `style-guide`, and `2`. */
@@ -23,12 +19,24 @@ const generateCssHandles = <T extends CssHandlesInput>(
    * provides 3 different results. Yeah I know.
    * There exists a `String.matchAll()` function but it's not
    * supported on Safari */
-  const [vendor] = splitAppName.exec(component) || [null]
-  const [name] = splitAppName.exec(component) || [null]
-  const [major] = splitAppName.exec(component) || [null]
+  const [vendor] = splitAppName.exec(componentName) || [null]
+  const [name] = splitAppName.exec(componentName) || [null]
+  const [major] = splitAppName.exec(componentName) || [null]
 
-  const namespace = vendor && name && major && `${vendor}-${name}-${major}-x`
+  return { vendor, name, major }
+}
 
+const normalizeComponentName = (componentName: string) => {
+  const { vendor, name, major } = parseComponentName(componentName)
+
+  return vendor && name && major && `${vendor}-${name}-${major}-x`
+}
+
+const generateCssHandles = <T extends CssHandlesInput>(
+  namespace: string,
+  handles: T,
+  modifiers?: string | string[]
+) => {
   return handles.reduce<Record<string, string>>((acc, handle) => {
     const isValid = !!namespace && validateCssHandle(handle)
     const transformedHandle = `${namespace}-${handle}`
@@ -66,11 +74,24 @@ const useCssHandles = <T extends CssHandlesInput>(
 
   const values = useMemo<CssHandles<T>>(() => {
     const { migrationFrom } = options
-    const components = [component]
+    const normalizedComponent = normalizeComponentName(component)
+
+    const namespaces = normalizedComponent ? [normalizedComponent] : []
     if (migrationFrom) {
-      components.push(...([] as string[]).concat(migrationFrom))
+      const migrations = Array.isArray(migrationFrom)
+        ? migrationFrom
+        : [migrationFrom]
+
+      const normalizedMigrations = migrations
+        .map(normalizeComponentName)
+        .filter(
+          current => !!current && current !== normalizedComponent
+        ) as string[]
+
+      namespaces.push(...normalizedMigrations)
     }
-    return components
+
+    return namespaces
       .map(component => generateCssHandles(component, handles, blockClass))
       .reduce<CssHandles<T>>(
         (acc: null | CssHandles<T>, cur: CssHandles<T>) => {

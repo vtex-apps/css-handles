@@ -4,7 +4,7 @@ Utility for generating CSS handles for store components.
 
 🚧 Under Construction 🚧
 
-### Usage
+## Usage
 
 ```tsx
 import React, { FunctionComponent } from 'react'
@@ -34,4 +34,15 @@ const Component: FunctionComponent = () => {
     </div>
   )
 }
+```
+
+### Options
+
+- `migrationFrom`: Adds additional CSS handles for cases where a component is migrating from another app.
+  
+#### Usage:
+```tsx
+const CSS_HANDLES = ['container']
+const handles = useCssHandles(CSS_HANDLES, { migrationFrom: 'vtex.store-components@3.x' })
+// Returns { container: 'vtex-current-app-0-x-container vtex-store-components-3-x-container' }
 ```
