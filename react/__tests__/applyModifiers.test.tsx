@@ -43,14 +43,14 @@ describe('applyModifier', () => {
         'vtex-app-2-x-handle vtex-app-2-x-handle--blockClass vtex-app-2-x-handle--ok vtex-app-2-x-handle--blockClass--ok'
       )
     })
-    it('should not apply a modifier with spaces or dashes', () => {
+    it('should not apply a modifier with spaces, should allow with dashes', () => {
       const handle = 'vtex-app-2-x-handle vtex-app-2-x-handle--blockClass'
       const modifiers = ['ok', 'test 1', 'test-2', 'test\t3', 'test\n4']
 
       const modified = applyModifiers(handle, modifiers)
 
       expect(modified).toBe(
-        'vtex-app-2-x-handle vtex-app-2-x-handle--blockClass vtex-app-2-x-handle--ok vtex-app-2-x-handle--blockClass--ok'
+        'vtex-app-2-x-handle vtex-app-2-x-handle--blockClass vtex-app-2-x-handle--ok vtex-app-2-x-handle--blockClass--ok  vtex-app-2-x-handle--test-2 vtex-app-2-x-handle--blockClass--test-2'
       )
     })
     it('should not apply a modifier if its empty', () => {
