@@ -12,9 +12,9 @@ const validateModifier = (modifier: string) => {
     return false
   }
 
-  if (/[^A-z0-9]/.test(modifier)) {
+  if (/[^A-z0-9-]/.test(modifier)) {
     console.error(
-      `Invalid modifier on \`cssHandles.applyModifier\`. Modifiers should contain only letters and numbers`
+      `Invalid modifier on \`cssHandles.applyModifier\`. Modifiers should contain only letters, numbers or -`
     )
     return false
   }
