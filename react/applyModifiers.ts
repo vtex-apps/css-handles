@@ -47,6 +47,7 @@ const applyModifiers = (handles: string, modifier: string | string[]) => {
         .join(' ')
         .trim()
     })
+    .filter(l => l.length > 0)
     .join(' ')
     .trim()
 
