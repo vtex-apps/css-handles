@@ -50,7 +50,7 @@ describe('applyModifier', () => {
       const modified = applyModifiers(handle, modifiers)
 
       expect(modified).toBe(
-        'vtex-app-2-x-handle vtex-app-2-x-handle--blockClass vtex-app-2-x-handle--ok vtex-app-2-x-handle--blockClass--ok  vtex-app-2-x-handle--test-2 vtex-app-2-x-handle--blockClass--test-2'
+        'vtex-app-2-x-handle vtex-app-2-x-handle--blockClass vtex-app-2-x-handle--ok vtex-app-2-x-handle--blockClass--ok vtex-app-2-x-handle--test-2 vtex-app-2-x-handle--blockClass--test-2'
       )
     })
     it('should not apply a modifier if its empty', () => {
