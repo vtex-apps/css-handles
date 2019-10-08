@@ -46,7 +46,7 @@ const Component: FunctionComponent = () => {
 import React, { Component } from 'react'
 import { withCssHandles } from from 'vtex.css-handles'
 
-const CSS_HANDLES = ['container', 'background', 'text'] as const
+const CSS_HANDLES = ['text'] as const
 
 class ExampleComponent extends Component {
 
@@ -54,11 +54,7 @@ class ExampleComponent extends Component {
     const { cssHandles } = this.props
 
     return (
-      <div className={cssHandles.container}>
-        <div className={`${cssHandles.background} bg-red`}>
-          <div className={`${cssHandles.text} f1 c-white`}>Hello world</div>
-        </div>
-      </div>
+      <div className={`${cssHandles.text} f1 c-white`}>Hello world</div>
     )
   }
 }
