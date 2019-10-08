@@ -5,10 +5,6 @@ import applyModifiers from './applyModifiers'
 /** Verifies if the handle contains only letters and numbers, and does not begin with a number  */
 const validateCssHandle = (handle: string) => !/^\d|[^A-z0-9]/.test(handle)
 
-interface CssHandlesOptions {
-  migrationFrom?: string | string[]
-}
-
 const parseComponentName = (componentName: string) => {
   /* Matches until the first `.` or `@`.
    * Used to split something like `vtex.style-guide@2.0.1` into
@@ -109,10 +105,5 @@ const useCssHandles = <T extends CssHandlesInput>(
 
   return values
 }
-
-type ValueOf<T extends readonly any[]> = T[number]
-
-type CssHandlesInput = readonly string[]
-type CssHandles<T extends CssHandlesInput> = Record<ValueOf<T>, string>
 
 export default useCssHandles
