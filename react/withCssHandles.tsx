@@ -5,7 +5,9 @@ import { ComponentType } from 'react'
 const withCssHandles = <T extends CssHandlesInput, ComponentProps>(
   handles: T,
   options?: CssHandlesOptions
-) => (Component: ComponentType<ComponentProps & { cssHandles: CssHandles<T> }>) => {
+) => (
+  Component: ComponentType<ComponentProps & { cssHandles: CssHandles<T> }>
+) => {
   const EnhancedComponent = (props: ComponentProps) => {
     const cssHandles = useCssHandles(handles, options)
 
