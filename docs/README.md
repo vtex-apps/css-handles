@@ -27,7 +27,8 @@ const Component: FunctionComponent = () => {
           {['blue', 'yellow', 'green'].map(color => (
             <li
               className={`${applyModifiers(handles.item, color)} bg-${color}`}>
-              {/*             ˜˜˜˜˜˜˜˜˜˜˜˜˜˜ Appends modifier suffixes to the CSS handles, for selection of specific items.
+              {/*           ˜˜˜˜˜˜˜˜˜˜˜˜˜˜
+               * Appends modifier suffixes to the CSS handles, for selection of specific items.
                *                         For example, `handle handle--blockClass handle--color handle--blockClass--color` */}
               Color {color}
             </li>
@@ -45,7 +46,7 @@ const Component: FunctionComponent = () => {
 import React, { Component } from 'react'
 import { withCssHandles } from from 'vtex.css-handles'
 
-const CSS_HANDLES = ['container', 'background', 'text', 'item'] as const
+const CSS_HANDLES = ['container', 'background', 'text'] as const
 
 class ExampleComponent extends Component {
 
@@ -55,16 +56,7 @@ class ExampleComponent extends Component {
     return (
       <div className={cssHandles.container}>
         <div className={`${cssHandles.background} bg-red`}>
-          <h1 className={`${cssHandles.text} f1 c-white`}>Hello world</h1>
-          <ul>
-            {['blue', 'yellow', 'green'].map(color => (
-              <li className={`${applyModifiers(cssHandles.item, color)} bg-${color}`}>
-                {/*             ˜˜˜˜˜˜˜˜˜˜˜˜˜˜ Appends modifier suffixes to the CSS handles, for selection of specific items.
-                *                         For example, `handle handle--blockClass handle--color handle--blockClass--color` */}
-                Color {color}
-              </li>
-            ))}
-          </ul>
+          <div className={`${cssHandles.text} f1 c-white`}>Hello world</div>
         </div>
       </div>
     )
