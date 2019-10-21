@@ -44,18 +44,15 @@ const Component: FunctionComponent = () => {
 
 ```tsx
 import React, { Component } from 'react'
-import { withCssHandles } from from 'vtex.css-handles'
+import { withCssHandles } from 'vtex.css-handles'
 
 const CSS_HANDLES = ['text'] as const
 
 class ExampleComponent extends Component {
-
   render() {
     const { cssHandles } = this.props
 
-    return (
-      <div className={`${cssHandles.text} f1 c-white`}>Hello world</div>
-    )
+    return <div className={`${cssHandles.text} f1 c-white`}>Hello world</div>
   }
 }
 

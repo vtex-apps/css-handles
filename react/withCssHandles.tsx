@@ -1,4 +1,5 @@
 import React from 'react'
+import hoistNonReactStatic from 'hoist-non-react-statics'
 import useCssHandles from './useCssHandles'
 import { ComponentType } from 'react'
 
@@ -16,7 +17,8 @@ const withCssHandles = <T extends CssHandlesInput, ComponentProps>(
 
   const displayName = Component.displayName || Component.name || 'Component'
   EnhancedComponent.displayName = `withCssHandles(${displayName})`
-
+  hoistNonReactStatic(EnhancedComponent, Component)
+  EnhancedComponent.propTypes = Component.propTypes
   return EnhancedComponent
 }
 
