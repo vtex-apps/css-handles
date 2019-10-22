@@ -15,5 +15,6 @@ describe('withCssHandles propTypes', () => {
     const CSS_HANDLES = ['element1', 'element2']
     const EnhancedComponent = withCssHandles(CSS_HANDLES)(ExampleComponent)
     expect(EnhancedComponent.propTypes.cssHandles).toBeDefined()
+    expect(EnhancedComponent.defaultProps.cssHandles).toBeDefined()
   })
 })

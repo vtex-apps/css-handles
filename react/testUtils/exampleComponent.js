@@ -17,4 +17,8 @@ ExampleComponent.propTypes = {
   cssHandles: PropTypes.arrayOf(PropTypes.string),
 }
 
+ExampleComponent.defaultProps = {
+  cssHandles: [],
+}
+
 export default ExampleComponent

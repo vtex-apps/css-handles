@@ -19,6 +19,7 @@ const withCssHandles = <T extends CssHandlesInput, ComponentProps>(
   EnhancedComponent.displayName = `withCssHandles(${displayName})`
   hoistNonReactStatic(EnhancedComponent, Component)
   EnhancedComponent.propTypes = Component.propTypes
+  EnhancedComponent.defaultProps = Component.defaultProps
   return EnhancedComponent
 }
 
