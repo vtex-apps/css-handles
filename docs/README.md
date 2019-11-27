@@ -44,7 +44,7 @@ const Component: FunctionComponent = () => {
 
 ```tsx
 import React, { Component } from 'react'
-import { withCssHandles } from from 'vtex.css-handles'
+import { withCssHandles } from 'vtex.css-handles'
 
 const CSS_HANDLES = ['text'] as const
 
@@ -60,6 +60,31 @@ class ExampleComponent extends Component {
 }
 
 export default withCssHandles(CSS_HANDLES)(ExampleComponent)
+```
+
+### generateBlockClass
+
+```tsx
+import React from 'react'
+import { generateBlockClass } from 'vtex.css-handles'
+import styles from './styles.css'
+
+interface Props {
+  blockClass?: string
+}
+
+const MyComponent: React.FC<Props> = props => {
+  const { blockClass = '', children } = props
+
+  const myBlockClass = generateBlockClass(styles.container, blockClass)
+
+  return (
+    <div classNames={myBlockClass}>
+      {children}
+    </div>
+  )
+}
+
 ```
 
 ### Options
