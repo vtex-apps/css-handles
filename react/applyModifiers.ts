@@ -1,7 +1,8 @@
 const validateModifier = (modifier: string) => {
   if (typeof modifier !== 'string') {
     console.error(
-      `Invalid modifier type on \`cssHandles.applyModifier\`. All modifiers should be strings, found "${modifier}" `
+      'Invalid modifier type on `cssHandles.applyModifier`. All modifiers should be strings, but the following modifier was passed:',
+      modifier
     )
     return false
   }
@@ -14,7 +15,7 @@ const validateModifier = (modifier: string) => {
 
   if (/[^A-z0-9-]/.test(modifier)) {
     console.error(
-      `Invalid modifier on \`cssHandles.applyModifier\`. Modifiers should contain only letters, numbers or -`
+      `Invalid modifier "${modifier}" on \`cssHandles.applyModifier\`. Modifiers should contain only letters, numbers or -`
     )
     return false
   }
@@ -27,7 +28,8 @@ const applyModifiers = (handles: string, modifier: string | string[]) => {
     typeof modifier === 'string' ? [modifier] : modifier
   if (!Array.isArray(normalizedModifiers)) {
     console.error(
-      'Invalid modifier type on `cssHandles.applyModifier`. Please use either a string or an array of strings'
+      `Invalid modifier type on \`cssHandles.applyModifier\`. Please use either a string or an array of strings. The following modifier was passed:`,
+      modifier
     )
     return handles
   }
