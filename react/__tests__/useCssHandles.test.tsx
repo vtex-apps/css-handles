@@ -29,16 +29,32 @@ describe('useCssHandles', () => {
   })
   it('should not apply blockClasses if not available', () => {
     const CSS_HANDLES = ['element1', 'element2']
-    ;(useExtension as any).mockImplementationOnce(() => ({
-      component: 'vtex.app@2.1.0',
-      props: {},
-    }))
+      ; (useExtension as any).mockImplementationOnce(() => ({
+        component: 'vtex.app@2.1.0',
+        props: {},
+      }))
 
     const handles = useCssHandles(CSS_HANDLES)
 
     expect(handles).toStrictEqual({
       element1: 'vtex-app-2-x-element1',
       element2: 'vtex-app-2-x-element2',
+    })
+  })
+  it('make invalid class names be transformed to empty strings', () => {
+    const CSS_HANDLES = ['element1', 'element-2', 'element+3', '4element']
+      ; (useExtension as any).mockImplementationOnce(() => ({
+        component: 'vtex.app@2.1.0',
+        props: {},
+      }))
+
+    const handles = useCssHandles(CSS_HANDLES)
+
+    expect(handles).toStrictEqual({
+      element1: 'vtex-app-2-x-element1',
+      'element-2': 'vtex-app-2-x-element-2',
+      'element+3': '',
+      '4element': '',
     })
   })
   describe('migration', () => {

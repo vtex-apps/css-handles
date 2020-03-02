@@ -2,8 +2,8 @@ import { useMemo } from 'react'
 import { useExtension } from './hooks/useExtension'
 import applyModifiers from './applyModifiers'
 
-/** Verifies if the handle contains only letters and numbers, and does not begin with a number  */
-const validateCssHandle = (handle: string) => !/^\d|[^A-z0-9]/.test(handle)
+/** Verifies if the handle contains only letters, numbers and -, and does not begin with a number  */
+const validateCssHandle = (handle: string) => !/^\d|[^A-z0-9-]/.test(handle)
 
 const parseComponentName = (componentName: string) => {
   /* Matches until the first `.` or `@`.
