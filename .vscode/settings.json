@@ -1,8 +1,7 @@
 {
   "editor.formatOnSave": true,
   "prettier.eslintIntegration": true,
-  "eslint.validate": [
-    {
+  "eslint.validate": [{
       "language": "javascript",
       "autoFix": true
     },
@@ -22,8 +21,7 @@
   "eslint.autoFixOnSave": true,
   "eslint.alwaysShowStatus": true,
   "eslint.packageManager": "yarn",
-  "eslint.workingDirectories": [
-    {
+  "eslint.workingDirectories": [{
       "directory": "react",
       "changeProcessCWD": true
     },
@@ -31,5 +29,8 @@
       "directory": "node",
       "changeProcessCWD": true
     }
-  ]
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
 }
