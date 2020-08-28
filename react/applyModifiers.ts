@@ -1,4 +1,4 @@
-const modifierValidation = /[^A-z0-9-]/
+const INVALID_MODIFIER_PATTERN = /[^A-z0-9-]/
 
 const MODIFIER_ERROR_LOG_DELAY = 3000
 
@@ -47,7 +47,7 @@ const validateModifier = (modifier: string) => {
     return false
   }
 
-  if (modifierValidation.test(modifier)) {
+  if (INVALID_MODIFIER_PATTERN.test(modifier)) {
     logModifierError(modifier)
     return false
   }
