@@ -31,6 +31,10 @@ const displayModifierErrors = debounce(() => {
  * rather than a potentially huge wall of errors.
  */
 function logModifierError(modifier: InvalidModifier) {
+  // eslint-disable-next-line no-undef
+  if (process.env.NODE_ENV !== 'development') {
+    return
+  }
   invalidModifiers.add(modifier)
   displayModifierErrors()
 }
