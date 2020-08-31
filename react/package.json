@@ -20,7 +20,7 @@
     "eslint-config-vtex-react": "^5.0.1",
     "prettier": "^1.18.2",
     "prop-types": "^15.7.2",
-    "typescript": "3.5.2"
+    "typescript": "3.8.3"
   },
   "version": "0.4.2"
 }
