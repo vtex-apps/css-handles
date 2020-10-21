@@ -1,10 +1,11 @@
+// @ts-expect-error - private API
 import { useRuntime, useTreePath } from 'vtex.render-runtime'
 
 /** This code has been copied and adapted from vtex.render-runtime,
  * while it doesn't export this hook */
 
 function mountTreePath(base: string, children: string[]) {
-  return [base, ...children].filter(id => !!id).join('/')
+  return [base, ...children].filter((id) => !!id).join('/')
 }
 
 interface Options {
@@ -19,6 +20,7 @@ interface Extension {
 }
 
 export const useExtension = ({ children }: Options = {}): Extension | null => {
+  // @ts-expect-error - private API
   const { extensions } = useRuntime()
 
   const { treePath: baseTreePath } = useTreePath()

@@ -14,7 +14,7 @@ jest.mock('../hooks/useExtension', () => ({
   })),
 }))
 
-console.error = jest.fn()
+jest.spyOn(console, 'error').mockImplementation()
 
 describe('useCssHandles', () => {
   it('should apply proper classes to proper handles', () => {
@@ -29,10 +29,11 @@ describe('useCssHandles', () => {
   })
   it('should not apply blockClasses if not available', () => {
     const CSS_HANDLES = ['element1', 'element2']
-      ; (useExtension as any).mockImplementationOnce(() => ({
-        component: 'vtex.app@2.1.0',
-        props: {},
-      }))
+
+    ;(useExtension as any).mockImplementationOnce(() => ({
+      component: 'vtex.app@2.1.0',
+      props: {},
+    }))
 
     const handles = useCssHandles(CSS_HANDLES)
 
@@ -43,10 +44,11 @@ describe('useCssHandles', () => {
   })
   it('make invalid class names be transformed to empty strings', () => {
     const CSS_HANDLES = ['element1', 'element-2', 'element+3', '4element']
-      ; (useExtension as any).mockImplementationOnce(() => ({
-        component: 'vtex.app@2.1.0',
-        props: {},
-      }))
+
+    ;(useExtension as any).mockImplementationOnce(() => ({
+      component: 'vtex.app@2.1.0',
+      props: {},
+    }))
 
     const handles = useCssHandles(CSS_HANDLES)
 
