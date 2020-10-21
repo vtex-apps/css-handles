@@ -1,23 +1,17 @@
 import { useMemo } from 'react'
+
 import { useExtension } from './hooks/useExtension'
 import applyModifiers from './applyModifiers'
 
+const VALID_CSS_HANDLE_PATTERN = /^[^\d][\w-]$+/
+const APP_NAME_PATTERN = /([^.]+)\.([^@]+)@(\d+)/
+
 /** Verifies if the handle contains only letters, numbers and -, and does not begin with a number  */
-const validateCssHandle = (handle: string) => !/^\d|[^A-z0-9-]/.test(handle)
+const validateCssHandle = (handle: string) =>
+  VALID_CSS_HANDLE_PATTERN.test(handle)
 
 const parseComponentName = (componentName: string) => {
-  /* Matches until the first `.` or `@`.
-   * Used to split something like `vtex.style-guide@2.0.1` into
-   * `vtex`, `style-guide`, and `2`. */
-  const splitAppName = /[^@.]+/g
-
-  /* regex.exec is stateful, this is why running the command 3 times
-   * provides 3 different results. Yeah I know.
-   * There exists a `String.matchAll()` function but it's not
-   * supported on Safari */
-  const [vendor] = splitAppName.exec(componentName) || [null]
-  const [name] = splitAppName.exec(componentName) || [null]
-  const [major] = splitAppName.exec(componentName) || [null]
+  const [, vendor, name, major] = componentName.match(APP_NAME_PATTERN) ?? []
 
   return { vendor, name, major }
 }
@@ -25,7 +19,11 @@ const parseComponentName = (componentName: string) => {
 const normalizeComponentName = (componentName: string) => {
   const { vendor, name, major } = parseComponentName(componentName)
 
-  return vendor && name && major && `${vendor}-${name}-${major}-x`
+  if (vendor && name && major) {
+    return `${vendor}-${name}-${major}-x`
+  }
+
+  return null
 }
 
 const generateCssHandles = <T extends CssHandlesInput>(
@@ -36,6 +34,7 @@ const generateCssHandles = <T extends CssHandlesInput>(
   return handles.reduce<Record<string, string>>((acc, handle) => {
     const isValid = !!namespace && validateCssHandle(handle)
     const transformedHandle = `${namespace}-${handle}`
+
     acc[handle] = isValid
       ? modifiers
         ? applyModifiers(transformedHandle, modifiers)
@@ -65,7 +64,7 @@ const useCssHandles = <T extends CssHandlesInput>(
 ): CssHandles<T> => {
   const extension = useExtension()
 
-  const { props = {}, component = '' } = extension || {}
+  const { props = {}, component = '' } = extension ?? {}
   const blockClass = props.cssHandle || props.blockClass
 
   const values = useMemo<CssHandles<T>>(() => {
@@ -73,6 +72,7 @@ const useCssHandles = <T extends CssHandlesInput>(
     const normalizedComponent = normalizeComponentName(component)
 
     const namespaces = normalizedComponent ? [normalizedComponent] : []
+
     if (migrationFrom) {
       const migrations = Array.isArray(migrationFrom)
         ? migrationFrom
@@ -81,22 +81,26 @@ const useCssHandles = <T extends CssHandlesInput>(
       const normalizedMigrations = migrations
         .map(normalizeComponentName)
         .filter(
-          current => !!current && current !== normalizedComponent
+          (current) => !!current && current !== normalizedComponent
         ) as string[]
 
       namespaces.push(...normalizedMigrations)
     }
 
     return namespaces
-      .map(component => generateCssHandles(component, handles, blockClass))
+      .map((componentName) =>
+        generateCssHandles(componentName, handles, blockClass)
+      )
       .reduce<CssHandles<T>>(
         (acc: null | CssHandles<T>, cur: CssHandles<T>) => {
           if (!acc) {
             return cur
           }
+
           Object.keys(cur).forEach((key: ValueOf<T>) => {
             acc[key] = `${acc[key]} ${cur[key]}`
           })
+
           return acc
         },
         undefined as any

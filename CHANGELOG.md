@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+- Refactor CSS Handle name normalization and validation to a more performant method.
+
 ## [0.4.4] - 2020-08-31
 ### Changed
 - Modifier errors are only displayed on dev workspaces.
