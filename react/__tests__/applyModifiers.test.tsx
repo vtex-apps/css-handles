@@ -1,6 +1,6 @@
 import applyModifiers from '../applyModifiers'
 
-console.error = jest.fn()
+jest.spyOn(console, 'error').mockImplementation()
 
 describe('applyModifier', () => {
   it('should apply a single modifier properly', () => {

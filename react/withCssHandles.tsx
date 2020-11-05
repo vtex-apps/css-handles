@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { ComponentType } from 'react'
+
 import useCssHandles from './useCssHandles'
-import { ComponentType } from 'react'
+import { CssHandlesInput, CssHandlesOptions, CssHandles } from './typings'
 
 const withCssHandles = <T extends CssHandlesInput, ComponentProps>(
   handles: T,
@@ -15,6 +16,7 @@ const withCssHandles = <T extends CssHandlesInput, ComponentProps>(
   }
 
   const displayName = Component.displayName || Component.name || 'Component'
+
   EnhancedComponent.displayName = `withCssHandles(${displayName})`
 
   return EnhancedComponent
