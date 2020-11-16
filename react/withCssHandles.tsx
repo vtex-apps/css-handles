@@ -15,7 +15,7 @@ const withCssHandles = <T extends CssHandlesInput, ComponentProps>(
     return <Component cssHandles={cssHandles} {...props} />
   }
 
-  const displayName = Component.displayName || Component.name || 'Component'
+  const displayName = Component.displayName ?? Component.name ?? 'Component'
 
   EnhancedComponent.displayName = `withCssHandles(${displayName})`
 
