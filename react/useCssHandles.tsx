@@ -10,7 +10,7 @@ import type {
   ValueOf,
 } from './typings'
 
-const VALID_CSS_HANDLE_PATTERN = /^[^\d][\w-]$+/
+const VALID_CSS_HANDLE_PATTERN = /^[^\d][\w-]+$/
 const APP_NAME_PATTERN = /([^.]+)\.([^@]+)@(\d+)/
 
 /** Verifies if the handle contains only letters, numbers and -, and does not begin with a number  */
@@ -18,7 +18,7 @@ const validateCssHandle = (handle: string) =>
   VALID_CSS_HANDLE_PATTERN.test(handle)
 
 const parseComponentName = (componentName: string) => {
-  const [, vendor, name, major] = componentName.match(APP_NAME_PATTERN) ?? []
+  const [, vendor, name, major] = componentName.match(APP_NAME_PATTERN) || []
 
   return { vendor, name, major }
 }
@@ -88,7 +88,7 @@ const useCssHandles = <T extends CssHandlesInput>(
       const normalizedMigrations = migrations
         .map(normalizeComponentName)
         .filter(
-          current => !!current && current !== normalizedComponent
+          (current) => !!current && current !== normalizedComponent
         ) as string[]
 
       namespaces.push(...normalizedMigrations)
@@ -108,7 +108,7 @@ const useCssHandles = <T extends CssHandlesInput>(
     }
 
     return namespaces
-      .map(componentName =>
+      .map((componentName) =>
         generateCssHandles(componentName, handles, blockClass)
       )
       .reduce<CssHandles<T>>(
