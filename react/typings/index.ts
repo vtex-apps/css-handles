@@ -1,4 +1,4 @@
-import { SYMBOL_CUSTOM_CLASSES } from '../useHandlesOverrides'
+import { SYMBOL_CUSTOM_CLASSES } from '../useCustomClasses'
 
 type CustomClass =
   | string

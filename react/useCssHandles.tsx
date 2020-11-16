@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { useExtension } from './hooks/useExtension'
 import applyModifiers from './applyModifiers'
-import { SYMBOL_CUSTOM_CLASSES } from './useHandlesOverrides'
+import { SYMBOL_CUSTOM_CLASSES } from './useCustomClasses'
 import type {
   CssHandlesInput,
   CssHandles,
@@ -18,7 +18,7 @@ const validateCssHandle = (handle: string) =>
   VALID_CSS_HANDLE_PATTERN.test(handle)
 
 const parseComponentName = (componentName: string) => {
-  const [, vendor, name, major] = componentName.match(APP_NAME_PATTERN) || []
+  const [, vendor, name, major] = componentName.match(APP_NAME_PATTERN) ?? []
 
   return { vendor, name, major }
 }

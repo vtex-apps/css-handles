@@ -1,32 +1,21 @@
-import React, { Component } from 'react'
+import React, { FC } from 'react'
 import { render } from '@vtex/test-tools/react'
 
 import withCssHandles from '../withCssHandles'
 import { useExtension } from '../hooks/useExtension'
-
-type ValueOf<T extends readonly any[]> = T[number]
-
-type CssHandlesInput = readonly string[]
-type CssHandles<T extends CssHandlesInput> = Record<ValueOf<T>, string>
-interface CssHandlesOptions {
-  migrationFrom?: string | string[]
-}
+import type { CssHandlesInput, CssHandles, CssHandlesOptions } from '../typings'
 
 interface Props<T extends CssHandlesInput> {
-  cssHandles?: CssHandles<T>
+  cssHandles: CssHandles<T>
 }
 
-class ExampleComponent<T extends CssHandlesInput> extends Component<Props<T>> {
-  public render() {
-    const cssHandles = this.props.cssHandles as CssHandles<T>
-
-    return (
-      <div
-        data-testid="test-div"
-        className={Object.values(cssHandles).join(' ')}
-      />
-    )
-  }
+const ExampleComponent: FC<Props<any>> = ({ cssHandles }) => {
+  return (
+    <div
+      data-testid="test-div"
+      className={Object.values(cssHandles).join(' ')}
+    />
+  )
 }
 
 jest.mock('../hooks/useExtension', () => ({

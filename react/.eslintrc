@@ -1,3 +1,11 @@
 {
-  "extends": "vtex-react/io"
+  "extends": "vtex-react/io",
+  "overrides": [
+    {
+      "files": ["__tests__/**/*"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    }
+  ]
 }
