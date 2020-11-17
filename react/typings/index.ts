@@ -1,22 +1,24 @@
-import { SYMBOL_CUSTOM_CLASSES } from '../useCustomClasses'
+export type ValueOf<T extends readonly unknown[]> = T[number]
 
-type CustomClass =
+type CustomClassItem =
   | string
   | {
       name: string
-      applyModifiers: boolean
+      applyModifiers?: boolean
     }
 
-export type CssHandlesInput = readonly string[]
+export type CssHandlesList = readonly string[]
 
-export type ValueOf<T extends readonly any[]> = T[number]
+export type CssHandles<T extends CssHandlesList> = Record<ValueOf<T>, string>
 
-export type CssHandles<T extends CssHandlesInput> = Record<ValueOf<T>, string>
+export type CustomClassValue = CustomClassItem | CustomClassItem[]
 
-export interface CssHandlesOptions {
+export type CustomClasses<T extends CssHandlesList> = Record<
+  ValueOf<T>,
+  CustomClassValue
+>
+
+export interface CssHandlesOptions<T extends CssHandlesList> {
   migrationFrom?: string | string[]
-  classes?: {
-    [key: string]: CustomClass | CustomClass[] | typeof SYMBOL_CUSTOM_CLASSES
-    __classes: typeof SYMBOL_CUSTOM_CLASSES
-  }
+  classes?: CustomClasses<T>
 }
