@@ -5,7 +5,7 @@ import { getCustomClassValue } from './modules/customClasses'
 import applyModifiers from './applyModifiers'
 import { SYMBOL_CUSTOM_CLASSES } from './useCustomClasses'
 import type {
-  CssHandlesInput,
+  CssHandlesList,
   CssHandles,
   CssHandlesOptions,
   ValueOf,
@@ -34,7 +34,7 @@ const normalizeComponentName = (componentName: string) => {
   return null
 }
 
-const generateCssHandles = <T extends CssHandlesInput>(
+const generateCssHandles = <T extends CssHandlesList>(
   namespace: string,
   handles: T,
   modifiers?: string | string[]
@@ -66,7 +66,7 @@ const generateCssHandles = <T extends CssHandlesInput>(
  * object with generated css class names, e.g.
  * { foo: 'vendor-appname-1-x-foo', bar: 'vendor-appname-1-x-bar' }.
  */
-const useCssHandles = <T extends CssHandlesInput>(
+const useCssHandles = <T extends CssHandlesList>(
   handleList: T,
   options: CssHandlesOptions<T> = {}
 ): CssHandles<T> => {

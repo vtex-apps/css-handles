@@ -3,9 +3,9 @@ import { render } from '@vtex/test-tools/react'
 
 import withCssHandles from '../withCssHandles'
 import { useExtension } from '../hooks/useExtension'
-import type { CssHandlesInput, CssHandles, CssHandlesOptions } from '../typings'
+import type { CssHandlesList, CssHandles, CssHandlesOptions } from '../typings'
 
-interface Props<T extends CssHandlesInput> {
+interface Props<T extends CssHandlesList> {
   cssHandles: CssHandles<T>
 }
 
@@ -29,8 +29,8 @@ jest.mock('../hooks/useExtension', () => ({
 
 describe('withCssHandles', () => {
   const renderComponent = (
-    handlesNames: CssHandlesInput,
-    options?: CssHandlesOptions
+    handlesNames: CssHandlesList,
+    options?: CssHandlesOptions<any>
   ) => {
     const EnhancedComponent = withCssHandles<
       typeof handlesNames,
