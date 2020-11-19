@@ -27,7 +27,7 @@ There are cases where multiple components of a block have handles. In this cases
 - `CssHandlesBag` object:
 
 | Keys | Type | Description |
-| ----------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
+| ----------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `handles` | `[string]` | List of css handles |
 | `withModifiers` | `function(string, string) => string` | Appends modifier suffixes to the CSS handles, for selection of specific items. The first argument receives the name of a handle, and the second one a string to be appended. |
 
