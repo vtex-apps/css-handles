@@ -10,7 +10,7 @@ const withCssHandles = <T extends CssHandlesList, ComponentProps>(
   Component: ComponentType<ComponentProps & { cssHandles: CssHandles<T> }>
 ) => {
   const EnhancedComponent = (props: ComponentProps) => {
-    const cssHandles = useCssHandles(handles, options)
+    const { handles: cssHandles } = useCssHandles(handles, options)
 
     return <Component cssHandles={cssHandles} {...props} />
   }

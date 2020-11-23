@@ -20,7 +20,7 @@ jest.spyOn(console, 'error').mockImplementation()
 test('should apply proper classes to proper handles', () => {
   const CSS_HANDLES = ['element1', 'element2']
 
-  const handles = useCssHandles(CSS_HANDLES)
+  const { handles } = useCssHandles(CSS_HANDLES)
 
   expect(handles).toStrictEqual({
     element1: 'vtex-app-2-x-element1 vtex-app-2-x-element1--blockClass',
@@ -36,7 +36,7 @@ test('should not apply blockClasses if not available', () => {
     props: {},
   }))
 
-  const handles = useCssHandles(CSS_HANDLES)
+  const { handles } = useCssHandles(CSS_HANDLES)
 
   expect(handles).toStrictEqual({
     element1: 'vtex-app-2-x-element1',
@@ -52,7 +52,7 @@ test('make invalid class names be transformed to empty strings', () => {
     props: {},
   }))
 
-  const handles = useCssHandles(CSS_HANDLES)
+  const { handles } = useCssHandles(CSS_HANDLES)
 
   expect(handles).toStrictEqual({
     element1: 'vtex-app-2-x-element1',
@@ -66,7 +66,7 @@ describe('migration', () => {
   it('should add both the current app and the migration app', () => {
     const CSS_HANDLES = ['element1', 'element2']
 
-    const handles = useCssHandles(CSS_HANDLES, {
+    const { handles } = useCssHandles(CSS_HANDLES, {
       migrationFrom: 'vtex.previous-app@3.0.0',
     })
 
@@ -81,7 +81,7 @@ describe('migration', () => {
   it('should add more than one migration if needed', () => {
     const CSS_HANDLES = ['element1', 'element2']
 
-    const handles = useCssHandles(CSS_HANDLES, {
+    const { handles } = useCssHandles(CSS_HANDLES, {
       migrationFrom: ['vtex.previous-app@2.0.0', 'vtex.previous-app@3.0.0'],
     })
 
@@ -96,7 +96,7 @@ describe('migration', () => {
   it('doesnt repeat the migration if the current app happens to be the same as the migration one', () => {
     const CSS_HANDLES = ['element1', 'element2']
 
-    const handles = useCssHandles(CSS_HANDLES, {
+    const { handles } = useCssHandles(CSS_HANDLES, {
       migrationFrom: [
         'vtex.previous-app@2.0.0',
         'vtex.previous-app@3.0.0',
@@ -126,7 +126,7 @@ describe('custom classes', () => {
       'element8',
     ] as const
 
-    const handles = useCssHandles(CSS_HANDLES, {
+    const { handles } = useCssHandles(CSS_HANDLES, {
       classes: {
         element2: 'a',
         element3: ['b'],
