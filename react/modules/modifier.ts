@@ -20,6 +20,11 @@ type InvalidModifier = any
 
 const invalidModifiers = new Set<InvalidModifier>([])
 
+// Useful for testing purposes
+export const resetInvalidModifiers = () => {
+  invalidModifiers.clear()
+}
+
 const displayModifierErrors = debounce(() => {
   console.error(
     `Invalid CSS modifiers. All modifiers should be strings, and only contain letters, numbers, or -. Found: ${Array.from(

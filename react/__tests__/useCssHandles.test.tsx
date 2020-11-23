@@ -1,6 +1,7 @@
 import useCssHandles from '../useCssHandles'
 import { useExtension } from '../hooks/useExtension'
 import { SYMBOL_CUSTOM_CLASSES } from '../useCustomClasses'
+import { resetInvalidModifiers } from '../modules/modifier'
 
 jest.mock('react', () => ({
   useMemo: (callback: () => any) => callback(),
@@ -19,52 +20,50 @@ jest.useFakeTimers()
 
 const consoleError = jest.spyOn(console, 'error').mockImplementation()
 
-beforeEach(() => {
-  consoleError.mockClear()
-})
+describe('basic usage', () => {
+  it('should apply proper classes to proper handles', () => {
+    const CSS_HANDLES = ['element1', 'element2']
 
-test('should apply proper classes to proper handles', () => {
-  const CSS_HANDLES = ['element1', 'element2']
+    const { handles } = useCssHandles(CSS_HANDLES)
 
-  const { handles } = useCssHandles(CSS_HANDLES)
-
-  expect(handles).toStrictEqual({
-    element1: 'vtex-app-2-x-element1 vtex-app-2-x-element1--blockClass',
-    element2: 'vtex-app-2-x-element2 vtex-app-2-x-element2--blockClass',
+    expect(handles).toStrictEqual({
+      element1: 'vtex-app-2-x-element1 vtex-app-2-x-element1--blockClass',
+      element2: 'vtex-app-2-x-element2 vtex-app-2-x-element2--blockClass',
+    })
   })
-})
 
-test('should not apply blockClasses if not available', () => {
-  const CSS_HANDLES = ['element1', 'element2']
+  it('should not apply blockClasses if not available', () => {
+    const CSS_HANDLES = ['element1', 'element2']
 
-  ;(useExtension as any).mockImplementationOnce(() => ({
-    component: 'vtex.app@2.1.0',
-    props: {},
-  }))
+    ;(useExtension as any).mockImplementationOnce(() => ({
+      component: 'vtex.app@2.1.0',
+      props: {},
+    }))
 
-  const { handles } = useCssHandles(CSS_HANDLES)
+    const { handles } = useCssHandles(CSS_HANDLES)
 
-  expect(handles).toStrictEqual({
-    element1: 'vtex-app-2-x-element1',
-    element2: 'vtex-app-2-x-element2',
+    expect(handles).toStrictEqual({
+      element1: 'vtex-app-2-x-element1',
+      element2: 'vtex-app-2-x-element2',
+    })
   })
-})
 
-test('make invalid class names be transformed to empty strings', () => {
-  const CSS_HANDLES = ['element1', 'element-2', 'element+3', '4element']
+  it('make invalid class names be transformed to empty strings', () => {
+    const CSS_HANDLES = ['element1', 'element-2', 'element+3', '4element']
 
-  ;(useExtension as any).mockImplementationOnce(() => ({
-    component: 'vtex.app@2.1.0',
-    props: {},
-  }))
+    ;(useExtension as any).mockImplementationOnce(() => ({
+      component: 'vtex.app@2.1.0',
+      props: {},
+    }))
 
-  const { handles } = useCssHandles(CSS_HANDLES)
+    const { handles } = useCssHandles(CSS_HANDLES)
 
-  expect(handles).toStrictEqual({
-    element1: 'vtex-app-2-x-element1',
-    'element-2': 'vtex-app-2-x-element-2',
-    'element+3': '',
-    '4element': '',
+    expect(handles).toStrictEqual({
+      element1: 'vtex-app-2-x-element1',
+      'element-2': 'vtex-app-2-x-element-2',
+      'element+3': '',
+      '4element': '',
+    })
   })
 })
 
@@ -160,15 +159,29 @@ describe('custom classes', () => {
 })
 
 describe('withModifiers', () => {
+  beforeEach(() => {
+    consoleError.mockClear()
+    resetInvalidModifiers()
+  })
+
   it('should work with no custom classes', () => {
     const CSS_HANDLES = ['handle1'] as const
 
     const { withModifiers } = useCssHandles(CSS_HANDLES)
 
-    const result = withModifiers('handle1', 'mod')
+    const singleMod = withModifiers('handle1', 'mod')
+    const multiMod = withModifiers('handle1', ['mod', 'mod2'])
+    // @ts-expect-error passing wrong param for tests
+    const multiNullMod = withModifiers('handle1', ['mod', null, 'mod2'])
 
-    expect(result).toBe(
+    expect(singleMod).toBe(
       'vtex-app-2-x-handle1 vtex-app-2-x-handle1--blockClass vtex-app-2-x-handle1--mod vtex-app-2-x-handle1--blockClass--mod'
+    )
+    expect(multiMod).toBe(
+      'vtex-app-2-x-handle1 vtex-app-2-x-handle1--blockClass vtex-app-2-x-handle1--mod vtex-app-2-x-handle1--blockClass--mod vtex-app-2-x-handle1--mod2 vtex-app-2-x-handle1--blockClass--mod2'
+    )
+    expect(multiNullMod).toBe(
+      'vtex-app-2-x-handle1 vtex-app-2-x-handle1--blockClass vtex-app-2-x-handle1--mod vtex-app-2-x-handle1--blockClass--mod vtex-app-2-x-handle1--mod2 vtex-app-2-x-handle1--blockClass--mod2'
     )
   })
 
