@@ -1,11 +1,11 @@
 export type ValueOf<T extends readonly unknown[]> = T[number]
 
-type CustomClassItem =
-  | string
-  | {
-      name: string
-      applyModifiers?: boolean
-    }
+export type CustomClassItemWithOptions = {
+  name: string
+  applyModifiers?: boolean
+}
+
+export type CustomClassItem = string | CustomClassItemWithOptions
 
 export type CssHandlesList = readonly string[]
 

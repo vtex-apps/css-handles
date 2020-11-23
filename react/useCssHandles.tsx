@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 
 import { useExtension } from './hooks/useExtension'
 import { getCustomClassValue } from './modules/customClasses'
+import { validateModifier } from './modules/modifier'
 import applyModifiers from './applyModifiers'
 import { SYMBOL_CUSTOM_CLASSES } from './useCustomClasses'
 import type {
@@ -10,6 +11,8 @@ import type {
   CssHandlesOptions,
   ValueOf,
   CssHandlesBag,
+  CustomClassValue,
+  CustomClassItem,
 } from './typings'
 
 const VALID_CSS_HANDLE_PATTERN = /^[^\d][\w-]+$/
@@ -114,7 +117,7 @@ const useCssHandles = <T extends CssHandlesList>(
         handlesSet.delete(handleName)
 
         handles[handleName as ValueOf<T>] = getCustomClassValue(
-          handlesOverride[handleName]
+          handlesOverride[handleName] as Required<CustomClassValue>
         )
       })
     }
@@ -137,12 +140,69 @@ const useCssHandles = <T extends CssHandlesList>(
       })
     }, handles)
 
+    const withModifiers = (id: ValueOf<T>, modifier: string | string[]) => {
+      const normalizedModifiers =
+        typeof modifier === 'string' ? [modifier] : modifier
+
+      if (!Array.isArray(normalizedModifiers)) {
+        console.error(
+          'Invalid modifier type on `withModifier`. Please use either a string or an array of strings'
+        )
+
+        return handles[id]
+      }
+
+      let baseHandles: string[] = []
+      let handlesToModify: string[] = []
+
+      if (handlesOverride?.[id]) {
+        const classList = Array.isArray(handlesOverride[id])
+          ? (handlesOverride[id] as CustomClassItem[])
+          : ([handlesOverride[id]] as CustomClassItem[])
+
+        classList.forEach((customClass) => {
+          if (typeof customClass === 'string') {
+            baseHandles.push(customClass)
+          } else {
+            baseHandles.push(customClass.name)
+            if (customClass.applyModifiers === true) {
+              handlesToModify.push(customClass.name)
+            }
+          }
+        })
+
+        if (handlesToModify.length === 0) {
+          return handles[id]
+        }
+      } else {
+        baseHandles = handles[id].split(' ')
+        handlesToModify = baseHandles
+      }
+
+      const modifiedHandles = normalizedModifiers
+        .map((currentModifier) => {
+          const isValid = validateModifier(currentModifier)
+
+          if (!isValid) {
+            return ''
+          }
+
+          return handlesToModify
+            .map((handle) => `${handle}--${currentModifier}`)
+            .join(' ')
+            .trim()
+        })
+        .filter((l) => l.length > 0)
+        .join(' ')
+        .trim()
+
+      return baseHandles.concat(modifiedHandles).join(' ').trim()
+    }
+
     return {
       handles,
       // todo
-      withModifiers(id, mods) {
-        return ''
-      },
+      withModifiers,
     }
   }, [blockClass, component, handleList, options])
 
