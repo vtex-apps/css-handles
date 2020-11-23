@@ -216,25 +216,6 @@ describe('withModifiers', () => {
     expect(result).toBe('vtex-app-2-x-handle1 vtex-app-2-x-handle1--blockClass')
   })
 
-  it('should return custom classes without modifiers if there is not applyModifiers', () => {
-    const CSS_HANDLES = ['handle1', 'handle2', 'handle3'] as const
-    const classes = {
-      handle1: 'customClass',
-      handle2: ['customClass', { name: 'anotherClass' }],
-      handle3: { name: 'customClass' },
-    }
-
-    const { withModifiers } = useCssHandles(CSS_HANDLES, { classes })
-
-    const handle1 = withModifiers('handle1', 'mod')
-    const handle2 = withModifiers('handle2', 'mod')
-    const handle3 = withModifiers('handle3', 'mod')
-
-    expect(handle1).toBe('customClass')
-    expect(handle2).toBe('customClass anotherClass')
-    expect(handle3).toBe('customClass')
-  })
-
   it('should apply modifiers only on custom classes with applyModifiers', () => {
     const CSS_HANDLES = ['handle1', 'handle2', 'handle3'] as const
     const classes = {
