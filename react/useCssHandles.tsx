@@ -146,7 +146,7 @@ const useCssHandles = <T extends CssHandlesList>(
           handles[key] = namespaceHandles[key]
         }
       })
-    }, handles)
+    })
 
     const withModifiers = (id: ValueOf<T>, modifier: string | string[]) => {
       const normalizedModifiers =
