@@ -100,7 +100,7 @@ import { useCssHandles, useCustomClasses } from 'vtex.css-handles'
 // That is the example above
 import MyExampleComponent from './MyExampleComponent'
 
-function MyComponent({ classes }) {
+function MyComponent() {
   const classes = useCustomClasses(() => {
     container: 'foobar childContainer',
     text: ['anArray', 'example'],
