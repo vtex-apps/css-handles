@@ -10,9 +10,18 @@ const withCssHandles = <T extends CssHandlesList, ComponentProps>(
   Component: ComponentType<ComponentProps & { cssHandles: CssHandles<T> }>
 ) => {
   const EnhancedComponent = (props: ComponentProps) => {
-    const { handles: cssHandles } = useCssHandles(handles, options)
+    const { handles: cssHandles, withModifiers } = useCssHandles(
+      handles,
+      options
+    )
 
-    return <Component cssHandles={cssHandles} {...props} />
+    return (
+      <Component
+        cssHandles={cssHandles}
+        withModifiers={withModifiers}
+        {...props}
+      />
+    )
   }
 
   const displayName = Component.displayName ?? Component.name ?? 'Component'

@@ -51,6 +51,7 @@ describe('withCssHandles', () => {
       'vtex-app-2-x-element1 vtex-app-2-x-element1--blockClass vtex-app-2-x-element2 vtex-app-2-x-element2--blockClass'
     )
   })
+
   it('should not apply blockClasses if not available', () => {
     const CSS_HANDLES = ['element1', 'element2'] as const
 
@@ -65,6 +66,7 @@ describe('withCssHandles', () => {
       'vtex-app-2-x-element1 vtex-app-2-x-element2'
     )
   })
+
   describe('migration', () => {
     it('should add both the current app and the migration app', () => {
       const CSS_HANDLES = ['element1', 'element2']
@@ -78,6 +80,7 @@ describe('withCssHandles', () => {
         'vtex-app-2-x-element1 vtex-app-2-x-element1--blockClass vtex-previous-app-3-x-element1 vtex-previous-app-3-x-element1--blockClass vtex-app-2-x-element2 vtex-app-2-x-element2--blockClass vtex-previous-app-3-x-element2 vtex-previous-app-3-x-element2--blockClass'
       )
     })
+
     it('should add more than one migration if needed', () => {
       const CSS_HANDLES = ['element1', 'element2']
       const options = {
