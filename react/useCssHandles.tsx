@@ -129,6 +129,7 @@ const useCssHandles = <T extends CssHandlesList>(
       })
     }
 
+    // `handlesToGenerate` are handles that were not overriden by classes
     const handlesToGenerate = [...handlesSet]
 
     namespaces.forEach((componentName) => {
