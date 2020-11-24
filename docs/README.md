@@ -26,10 +26,10 @@ There are cases where multiple components of a block have handles. In this cases
 
 - `CssHandlesBag` object:
 
-| Keys            | Type                     | Description                                                              |
-| --------------- | ------------------------ | ------------------------------------------------------------------------ |
-| `handles`       | `Record<string, string>` | An object where the keys are the handles and its values are the classes. |
-| `withModifiers` | `function(string, string | string[]) => string`                                                     | Appends modifier suffixes to the CSS handles, for selection of specific items. The first argument receives the name of a handle, and the second argument might be a list or a string of the modifier to be appended. |
+| Keys            | Type                                   | Description                                                                                                                                                                                                          |
+| --------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `handles`       | `Record<string, string>`               | An object where the keys are the handles and its values are the classes.                                                                                                                                             |
+| `withModifiers` | `function(string, string[]) => string` | Appends modifier suffixes to the CSS handles, for selection of specific items. The first argument receives the name of a handle, and the second argument might be a list or a string of the modifier to be appended. |
 
 - Example of usage:
 
