@@ -15,7 +15,6 @@ import type {
   ValueOf,
   CssHandlesBag,
   CustomClassValue,
-  CustomClassItem,
 } from './typings'
 
 const VALID_CSS_HANDLE_PATTERN = /^[^\d][\w-]+$/
