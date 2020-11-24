@@ -135,10 +135,10 @@ The function expects a list of handle names as input:
 
 The function outputs a `CssHandlesProvider` component and a `useContextCssHandles` hook.
 
-1. The `CssHandlesProvider` is used on the public component to provide all the `handles` and the `withModifier` function to its children via context. You should wrap your root component on the provider as shown on the example bellow.
+1. The `CssHandlesProvider` is used on the public component to provide all the `handles` and the `withModifier` function to its children via context. You should wrap your component with the provider as shown on the example bellow.
 2. Children of the public component that have handles of their own should use the `useContextCssHandles`. It outputs a `CssHandlesBag` just like the `useCssHandles` hook, and expects no input.
 
-#### Example without `createCssHandlesContext`
+#### Example of issues that `createCssHandlesContext` solves
 
 ```tsx
 /* PublicAPIComponent.tsx */
@@ -175,6 +175,10 @@ import { useCssHandles } from 'vtex.css-handles'
 
 const CSS_HANDLES = ['nestedPublicHandle'] as const
 
+/**
+ * Problem: if this component had another nested component it would need to pass
+ * the classes prop down again!
+ */
 const NestedPrivateComponent({ classes }) {
   const { handles } = useCssHandles(CSS_HANDLES, { classes })
 
@@ -207,7 +211,8 @@ const PublicAPIComponent({ classes }) {
     {/* Solution: provide handles by context */}
     <CssHandlesProvider handles={handles} withModifiers={withModifiers}>
       <div className={handles.root}>
-        <NestedPrivateComponent classes={classes} />
+        {/* Solution: no need to pass the classes prop down */}
+        <NestedPrivateComponent />
       </div>
     </CssHandlesProvider>
   )
@@ -222,6 +227,10 @@ import React from 'react'
 
 import { useContextCssHandles } from './cssHandlesContext.ts'
 
+/*
+ * Solution: if this component had another nested component, just merge the nested
+ * component CSS Handles here, just like we did in PublicAPIComponent.
+ */
 const CSS_HANDLES = ['nestedPublicHandle'] as const
 
 const NestedPrivateComponent() {
