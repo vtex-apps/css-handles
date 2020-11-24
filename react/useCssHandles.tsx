@@ -81,9 +81,9 @@ const useCssHandles = <T extends CssHandlesList>(
 
   const { props = {}, component = '' } = extension ?? {}
   const blockClass = props.cssHandle || props.blockClass
+  const { migrationFrom, classes: handlesOverride } = options
 
   const values = useMemo<CssHandlesBag<T>>(() => {
-    const { migrationFrom, classes: handlesOverride } = options
     const normalizedComponent = normalizeComponentName(component)
 
     const namespaces = normalizedComponent ? [normalizedComponent] : []
@@ -194,10 +194,9 @@ const useCssHandles = <T extends CssHandlesList>(
 
     return {
       handles,
-      // todo
       withModifiers,
     }
-  }, [blockClass, component, handleList, options])
+  }, [blockClass, component, handleList, migrationFrom, handlesOverride])
 
   return values
 }
