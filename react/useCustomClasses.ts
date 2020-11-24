@@ -1,13 +1,13 @@
 import { useMemo } from 'react'
 
-import type { CustomClasses } from './typings'
+import type { CustomClasses } from './CssHandlesTypes'
 
 export const SYMBOL_CUSTOM_CLASSES: unique symbol = Symbol('customClasses')
 
 const useCustomClasses = (
   classes: () => CustomClasses<string[]>,
   deps: unknown[] = []
-) => {
+): CustomClasses<string[]> => {
   // we know what we're doing *wink wink*
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const memo = useMemo(classes, deps)
