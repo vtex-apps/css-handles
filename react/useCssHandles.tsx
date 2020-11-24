@@ -1,7 +1,10 @@
 import { useMemo } from 'react'
 
 import { useExtension } from './hooks/useExtension'
-import { getCustomClassValue } from './modules/customClasses'
+import {
+  computeCustomClassValue,
+  ComputedCustomClass,
+} from './modules/customClasses'
 import { validateModifier } from './modules/modifier'
 import applyModifiers from './applyModifiers'
 import { SYMBOL_CUSTOM_CLASSES } from './useCustomClasses'
@@ -86,6 +89,7 @@ const useCssHandles = <T extends CssHandlesList>(
     const namespaces = normalizedComponent ? [normalizedComponent] : []
     const handlesSet = new Set<ValueOf<T>>(handleList)
     const handles = {} as CssHandles<T>
+    const computedCustomClasses = new Map<ValueOf<T>, ComputedCustomClass>()
 
     if (migrationFrom) {
       const migrations = Array.isArray(migrationFrom)
@@ -116,9 +120,12 @@ const useCssHandles = <T extends CssHandlesList>(
         // side-effect to remove handles that we don't need to generate full names
         handlesSet.delete(handleName)
 
-        handles[handleName as ValueOf<T>] = getCustomClassValue(
+        const computedCustomClass = computeCustomClassValue(
           handlesOverride[handleName] as Required<CustomClassValue>
         )
+
+        handles[handleName] = computedCustomClass.classNames.join(' ')
+        computedCustomClasses.set(handleName, computedCustomClass)
       })
     }
 
@@ -152,34 +159,20 @@ const useCssHandles = <T extends CssHandlesList>(
         return handles[id]
       }
 
-      let baseHandles: string[] = []
-      let handlesToModify: string[] = []
+      let baseClassNames: string[] = []
+      let classesToApplyModifiers: string[] = []
 
-      if (handlesOverride?.[id]) {
-        const classList = Array.isArray(handlesOverride[id])
-          ? (handlesOverride[id] as CustomClassItem[])
-          : ([handlesOverride[id]] as CustomClassItem[])
+      const computedCustomClass = computedCustomClasses.get(id)
 
-        classList.forEach((customClass) => {
-          if (typeof customClass === 'string') {
-            baseHandles.push(customClass)
-          } else {
-            baseHandles.push(customClass.name)
-            if (customClass.applyModifiers === true) {
-              handlesToModify.push(customClass.name)
-            }
-          }
-        })
-
-        if (handlesToModify.length === 0) {
-          return handles[id]
-        }
+      if (computedCustomClass) {
+        baseClassNames = computedCustomClass.classNames
+        classesToApplyModifiers = computedCustomClass.toApplyModifiers
       } else {
-        baseHandles = handles[id].split(' ')
-        handlesToModify = baseHandles
+        baseClassNames = handles[id].split(' ')
+        classesToApplyModifiers = baseClassNames
       }
 
-      const modifiedHandles = normalizedModifiers
+      const modifiedClasses = normalizedModifiers
         .map((currentModifier) => {
           const isValid = validateModifier(currentModifier)
 
@@ -187,8 +180,8 @@ const useCssHandles = <T extends CssHandlesList>(
             return ''
           }
 
-          return handlesToModify
-            .map((handle) => `${handle}--${currentModifier}`)
+          return classesToApplyModifiers
+            .map((className) => `${className}--${currentModifier}`)
             .join(' ')
             .trim()
         })
@@ -196,7 +189,7 @@ const useCssHandles = <T extends CssHandlesList>(
         .join(' ')
         .trim()
 
-      return baseHandles.concat(modifiedHandles).join(' ').trim()
+      return baseClassNames.concat(modifiedClasses).join(' ').trim()
     }
 
     return {

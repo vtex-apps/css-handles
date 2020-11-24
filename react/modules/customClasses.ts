@@ -1,16 +1,29 @@
 import { CustomClassValue } from '../typings/index'
 
-export function getCustomClassValue(customClass: CustomClassValue) {
+export type ComputedCustomClass = {
+  toApplyModifiers: string[]
+  classNames: string[]
+}
+
+export function computeCustomClassValue(customClass: CustomClassValue) {
   customClass = Array.isArray(customClass) ? customClass : [customClass]
 
-  return customClass
-    .filter(Boolean)
-    .map((className) => {
+  return customClass.filter(Boolean).reduce<ComputedCustomClass>(
+    (acc, className) => {
       if (typeof className === 'string') {
-        return className
+        acc.classNames.push(className)
+
+        return acc
       }
 
-      return className.name
-    })
-    .join(' ')
+      acc.classNames.push(className.name)
+
+      if (className.applyModifiers) {
+        acc.toApplyModifiers.push(className.name)
+      }
+
+      return acc
+    },
+    { toApplyModifiers: [], classNames: [] }
+  )
 }
