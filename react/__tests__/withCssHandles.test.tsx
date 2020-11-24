@@ -3,7 +3,11 @@ import { render } from '@vtex/test-tools/react'
 
 import withCssHandles from '../withCssHandles'
 import { useExtension } from '../hooks/useExtension'
-import type { CssHandlesList, CssHandles, CssHandlesOptions } from '../typings'
+import type {
+  CssHandlesList,
+  CssHandles,
+  CssHandlesOptions,
+} from '../CssHandlesTypes'
 
 interface Props<T extends CssHandlesList> {
   cssHandles: CssHandles<T>

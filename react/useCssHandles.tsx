@@ -15,7 +15,7 @@ import type {
   ValueOf,
   CssHandlesBag,
   CustomClassValue,
-} from './typings'
+} from './CssHandlesTypes'
 
 const VALID_CSS_HANDLE_PATTERN = /^[^\d][\w-]+$/
 const APP_NAME_PATTERN = /([^.]+)\.([^@]+)@(\d+)/

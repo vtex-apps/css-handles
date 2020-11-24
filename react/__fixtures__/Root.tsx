@@ -1,7 +1,7 @@
 import React from 'react'
 
 import useCssHandles from '../useCssHandles'
-import { CustomClasses } from '../typings/index'
+import { CustomClasses } from '../CssHandlesTypes'
 import { CssHandlesProvider } from './handles'
 import Nested from './Nested'
 

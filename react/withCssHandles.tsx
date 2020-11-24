@@ -1,7 +1,11 @@
 import React, { ComponentType } from 'react'
 
 import useCssHandles from './useCssHandles'
-import { CssHandlesList, CssHandlesOptions, CssHandles } from './typings'
+import {
+  CssHandlesList,
+  CssHandlesOptions,
+  CssHandles,
+} from './CssHandlesTypes'
 
 const withCssHandles = <T extends CssHandlesList, ComponentProps>(
   handles: T,

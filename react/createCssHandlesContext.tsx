@@ -5,7 +5,7 @@ import React, {
   PropsWithChildren,
 } from 'react'
 
-import { CssHandlesList, CssHandlesBag } from './typings'
+import { CssHandlesList, CssHandlesBag } from './CssHandlesTypes'
 
 interface ProviderProps<T extends CssHandlesList> {
   withModifiers: CssHandlesBag<T>['withModifiers']

@@ -1,4 +1,4 @@
-import { CustomClassValue } from '../typings/index'
+import { CustomClassValue } from '../CssHandlesTypes'
 
 export type ComputedCustomClass = {
   toApplyModifiers: string[]
