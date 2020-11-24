@@ -125,76 +125,126 @@ export default MyComponent
 
 ### createCssHandlesContext
 
-The `createCssHandlesContext` hook can be used to create a context provider for handles. It makes easier to manage
-handles that are located in components of different levels of the tree.
+The `createCssHandlesContext` function can be used to create a context provider and consumer for handles. It makes easier to manage handles that are located in components of different levels of the tree, avoiding [prop drilling](https://kentcdodds.com/blog/prop-drilling).
 
-It expects a list of handle names as input. To work as intended, this hook must be called on a separate file, its output must be exported, and it has to receive all handles present in the root component (entrypoint of the block) and its children. `createCssHandlesContext` outputs a `CssHandlesProvider` component and a `useContextCssHandles` hook.
-
-The `CssHandlesProvider` is used on the root component to provide all the handles and the `withModifier` function to its children via context. You should wrap your root component on the provider as shown on the example below.
-
-Children of the root component that have handles of their own should use the `useContextCssHandles`. It outputs a `CssHandlesBag` just like the `useCssHandles` hook, and expects no input.
+The function expects a list of handle names as input:
 
 | Parameter | Type       | Description                                                                                                                                                                                         | Default value |
 | --------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
 | `handles` | `[string]` | ![https://img.shields.io/badge/-Mandatory-red](https://img.shields.io/badge/-Mandatory-red) List of handles to be supported by the whole block. The array is preferably a const (see example below) | `undefined`   |
 
-- Example of usage
+The function outputs a `CssHandlesProvider` component and a `useContextCssHandles` hook.
 
-`cssHandlesContext` file: creates and exports handles context.
+1. The `CssHandlesProvider` is used on the public component to provide all the `handles` and the `withModifier` function to its children via context. You should wrap your root component on the provider as shown on the example bellow.
+2. Children of the public component that have handles of their own should use the `useContextCssHandles`. It outputs a `CssHandlesBag` just like the `useCssHandles` hook, and expects no input.
 
-```tsx
-import { createCssHandlesContext } from 'vtex.css-handles'
-import { BLOCK_HANDLES } from './root'
-
-const { CssHandlesProvider, useContextCssHandles } = createCssHandlesContext(
-  BLOCK_HANDLES
-)
-
-export { CssHandlesProvider, useContextCssHandles }
-```
-
-`nested` file: creates the NestedComponent and defines its handles.
+#### Example without `createCssHandlesContext`
 
 ```tsx
-import React, { FunctionComponent } from 'react'
-import { useContextCssHandles } from './cssHandlesContext'
-
-const NestedComponent: FunctionComponent = ({ classes }) => {
-  const { handles } = useContextCssHandles()
-
-  return <div className={handles.nested}>Nested Component</div>
-}
-
-NestedComponent.handles = ['nested'] as const
-/* Defines which handles belong to the NestedComponent. It can then be used on the RootComponent
- * to assemble all the handles in a single place
- */
-```
-
-`root` file: gather all handle names used in the block, creates the handles and sets up the CssHandlesProvider with this values.
-
-```tsx
-import React, { FunctionComponent } from 'react'
+/* PublicAPIComponent.tsx */
+import React from 'react'
 import { useCssHandles } from 'vtex.css-handles'
-import { CssHandlesProvider } from './cssHandlesContext'
-import { NestedComponent } from './nested'
 
-export const BLOCK_HANDLES = ['root', ...NestedComponent.handles] as const
-/* This array is used by the context as a default value and by the component
- * to create the handles used by the entire block. The nested handles should be added
- * by using the spread operator on each of the nested component's handles.
+import { NestedPrivateComponent } from './NestedPrivateComponent'
+
+/**
+ * Problem: the nested handles are not included in the API of PublicAPIComponent.
+ * TypeScript will complain if the user passes the class "nestedPublicHandle",
+ * as "nestedPublicHandle" handle does not exist in PublicAPIComponent API.
  */
+const CSS_HANDLES = ['root'] as const
 
-const RootComponent: FunctionComponent = ({ classes }) => {
-  const { handles, withModifiers } = useCssHandles(BLOCK_HANDLES, { classes })
+const PublicAPIComponent({ classes }) {
+  const { handles, withModifiers } = useCssHandles(CSS_HANDLES, { classes })
 
   return (
+    <div className={handles.root}>
+      {/* Problem: we need to pass the classes prop down. */}
+      <NestedPrivateComponent classes={classes} />
+    </div>
+  )
+}
+
+export default PublicAPIComponent
+```
+
+```tsx
+/* NestedPrivateComponent.tsx */
+import React from 'react'
+import { useCssHandles } from 'vtex.css-handles'
+
+const CSS_HANDLES = ['nestedPublicHandle'] as const
+
+const NestedPrivateComponent({ classes }) {
+  const { handles } = useCssHandles(CSS_HANDLES, { classes })
+
+  return <div className={handles.nestedPublicHandle}>Nested Component</div>
+}
+
+export default NestedPrivateComponent
+```
+
+#### Example with the usage of `createCssHandlesContext`
+
+```tsx
+/* PublicAPIComponent.tsx */
+import React from 'react'
+import { useCssHandles } from 'vtex.css-handles'
+
+import { CssHandlesProvider } from './cssHandlesContext'
+import { NestedPrivateComponent } from './NestedPrivateComponent'
+
+/**
+ * Solution: include the NestedPrivateComponent CSS handles in the
+ * PublicAPIComponent API.
+ */
+export const CSS_HANDLES = ['root', ...NestedPrivateComponent.cssHandles] as const
+
+const PublicAPIComponent({ classes }) {
+  const { handles, withModifiers } = useCssHandles(CSS_HANDLES, { classes })
+
+  return (
+    {/* Solution: provide handles by context */}
     <CssHandlesProvider handles={handles} withModifiers={withModifiers}>
-      {/* Sets the handles and modifiers of the entire block on the provider. */}
       <div className={handles.root}>
-        <NestedComponent />
+        <NestedPrivateComponent classes={classes} />
       </div>
     </CssHandlesProvider>
   )
 }
+
+export default PublicAPIComponent
+```
+
+```tsx
+/* NestedPrivateComponent.tsx */
+import React from 'react'
+
+import { useContextCssHandles } from './cssHandlesContext.ts'
+
+const CSS_HANDLES = ['nestedPublicHandle'] as const
+
+const NestedPrivateComponent() {
+  // Use the hook created by `createCssHandlesContext`
+  const { handles } = useContextCssHandles()
+
+  return <div className={handles.nestedPublicHandle}>Nested Component</div>
+}
+
+NestedPrivateComponent.cssHandles = CSS_HANDLES
+
+export default NestedPrivateComponent
+```
+
+```ts
+/* cssHandlesContext.ts */
+import { createCssHandlesContext } from 'vtex.css-handles'
+
+import { CSS_HANDLES } from './PublicAPIComponent'
+
+const { CssHandlesProvider, useContextCssHandles } = createCssHandlesContext(
+  CSS_HANDLES
+)
+
+export { CssHandlesProvider, useContextCssHandles }
 ```
