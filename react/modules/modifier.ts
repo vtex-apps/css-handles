@@ -3,7 +3,7 @@ const INVALID_MODIFIER_PATTERN = /[^A-z0-9-]/
 const MODIFIER_ERROR_LOG_DELAY = 3000
 
 /** Simplified debounce */
-function debounce(fn: () => any, delay: number) {
+function debounce(fn: () => void, delay: number) {
   let timeout: NodeJS.Timeout | undefined
 
   return () => {
@@ -16,7 +16,7 @@ function debounce(fn: () => any, delay: number) {
   }
 }
 
-type InvalidModifier = any
+type InvalidModifier = unknown
 
 const invalidModifiers = new Set<InvalidModifier>([])
 
@@ -38,7 +38,6 @@ const displayModifierErrors = debounce(() => {
  * rather than a potentially huge wall of errors.
  */
 function logModifierError(modifier: InvalidModifier) {
-  // eslint-disable-next-line no-undef
   if (process.env.NODE_ENV === 'production') {
     return
   }

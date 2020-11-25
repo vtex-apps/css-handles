@@ -5,7 +5,7 @@ import withCssHandles from '../withCssHandles'
 import { useExtension } from '../hooks/useExtension'
 import type {
   CssHandlesList,
-  CssHandleProps,
+  CssHandlesBag,
   CssHandlesOptions,
 } from '../CssHandlesTypes'
 
@@ -23,13 +23,13 @@ describe('withCssHandles', () => {
     handlesNames: CssHandlesList,
     options?: CssHandlesOptions<any>
   ) => {
-    type InternalProps = CssHandleProps<typeof handlesNames>
+    type InternalProps = CssHandlesBag<typeof handlesNames>
 
-    const ExampleComponent: FC<InternalProps> = ({ cssHandles }) => {
+    const ExampleComponent: FC<InternalProps> = ({ handles }) => {
       return (
         <div
           data-testid="test-div"
-          className={Object.values(cssHandles).join(' ')}
+          className={Object.values(handles).join(' ')}
         />
       )
     }

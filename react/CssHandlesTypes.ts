@@ -24,12 +24,8 @@ export type CssHandlesBag<T extends CssHandlesList> = {
 /**
  * Props added to a wrapped component via `withCssHandles`
  */
-export type CssHandleProps<T extends CssHandlesList> = {
-  cssHandles: CssHandles<T>
-  withModifiers: WithModifiers<T>
-}
-export type WithCssHandleProps<T extends CssHandlesList, Props> = Props &
-  CssHandleProps<T>
+export type WithCssHandlesBag<T extends CssHandlesList, Props> = Props &
+  CssHandlesBag<T>
 
 export type CustomClassValue = CustomClassItem | CustomClassItem[]
 

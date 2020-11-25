@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { CustomClasses, CssHandlesList } from './CssHandlesTypes'
+import type { CustomClasses, CssHandlesList } from './CssHandlesTypes'
 
 export const SYMBOL_CUSTOM_CLASSES: unique symbol = Symbol('customClasses')
 

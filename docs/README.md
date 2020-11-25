@@ -2,6 +2,18 @@
 
 Utility for generating CSS handles for store components.
 
+<!-- @import "[TOC]" {cmd="toc" depthFrom=3 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [useCssHandles](#usecsshandles)
+- [useCustomClasses](#usecustomclasses)
+- [createCssHandlesContext](#createcsshandlescontext)
+  - [Example of issues that `createCssHandlesContext` solves](#example-of-issues-that-createcsshandlescontext-solves)
+  - [Example with the usage of `createCssHandlesContext`](#example-with-the-usage-of-createcsshandlescontext)
+
+<!-- /code_chunk_output -->
+
 ## API
 
 ### useCssHandles
