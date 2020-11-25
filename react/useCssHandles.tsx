@@ -12,7 +12,7 @@ import type {
   CssHandlesList,
   CssHandles,
   CssHandlesOptions,
-  ValueOf,
+  ValuesOf,
   CssHandlesBag,
   CustomClassValue,
 } from './CssHandlesTypes'
@@ -45,7 +45,7 @@ const generateCssHandles = <T extends CssHandlesList>(
   handles: T,
   modifiers?: string | string[]
 ) => {
-  return handles.reduce((acc, handle: ValueOf<T>) => {
+  return handles.reduce((acc, handle: ValuesOf<T>) => {
     const isValid = !!namespace && validateCssHandle(handle)
     const transformedHandle = `${namespace}-${handle}`
 
@@ -86,9 +86,9 @@ const useCssHandles = <T extends CssHandlesList>(
     const normalizedComponent = normalizeComponentName(component)
 
     const namespaces = normalizedComponent ? [normalizedComponent] : []
-    const handlesSet = new Set<ValueOf<T>>(handleList)
+    const handlesSet = new Set<ValuesOf<T>>(handleList)
     const handles = {} as CssHandles<T>
-    const computedCustomClasses = new Map<ValueOf<T>, ComputedCustomClass>()
+    const computedCustomClasses = new Map<ValuesOf<T>, ComputedCustomClass>()
 
     if (migrationFrom) {
       const migrations = Array.isArray(migrationFrom)
@@ -107,15 +107,14 @@ const useCssHandles = <T extends CssHandlesList>(
     if (handlesOverride) {
       if (
         process.env.NODE_ENV === 'development' &&
-        // @ts-expect-error - non public API
-        handlesOverride.__classes !== SYMBOL_CUSTOM_CLASSES
+        handlesOverride.__useCustomClasses !== SYMBOL_CUSTOM_CLASSES
       ) {
         throw new Error(
           "[css-handles] Invalid 'classes' option. Use the 'useCustomClasses' hook to generate a valid 'classes' object."
         )
       }
 
-      Object.keys(handlesOverride).forEach((handleName: ValueOf<T>) => {
+      Object.keys(handlesOverride).forEach((handleName: ValuesOf<T>) => {
         // side-effect to remove handles that we don't need to generate full names
         handlesSet.delete(handleName)
 
@@ -138,7 +137,7 @@ const useCssHandles = <T extends CssHandlesList>(
         blockClass
       )
 
-      Object.keys(namespaceHandles).forEach((key: ValueOf<T>) => {
+      Object.keys(namespaceHandles).forEach((key: ValuesOf<T>) => {
         if (key in handles) {
           handles[key] = `${handles[key]} ${namespaceHandles[key]}`
         } else {
@@ -147,7 +146,7 @@ const useCssHandles = <T extends CssHandlesList>(
       })
     })
 
-    const withModifiers = (id: ValueOf<T>, modifier: string | string[]) => {
+    const withModifiers = (id: ValuesOf<T>, modifier: string | string[]) => {
       const normalizedModifiers =
         typeof modifier === 'string' ? [modifier] : modifier
 

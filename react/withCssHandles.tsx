@@ -4,16 +4,15 @@ import useCssHandles from './useCssHandles'
 import {
   CssHandlesList,
   CssHandlesOptions,
-  CssHandles,
+  CssHandleProps,
 } from './CssHandlesTypes'
 
-const withCssHandles = <T extends CssHandlesList, ComponentProps>(
+// eslint-disable-next-line @typescript-eslint/ban-types
+const withCssHandles = <T extends CssHandlesList, Props = {}>(
   handles: T,
   options?: CssHandlesOptions<T>
-) => (
-  Component: ComponentType<ComponentProps & { cssHandles: CssHandles<T> }>
-) => {
-  const EnhancedComponent = (props: ComponentProps) => {
+) => (Component: ComponentType<Props & CssHandleProps<T>>) => {
+  const EnhancedComponent = (props: Props) => {
     const { handles: cssHandles, withModifiers } = useCssHandles(
       handles,
       options

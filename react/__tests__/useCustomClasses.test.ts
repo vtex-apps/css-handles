@@ -2,7 +2,7 @@ import { renderHook } from '@vtex/test-tools/react'
 
 import useCustomClasses, { SYMBOL_CUSTOM_CLASSES } from '../useCustomClasses'
 
-test('returns the same object keyed with "__classes"', () => {
+test('returns the same object keyed with "__useCustomClasses"', () => {
   const obj = {
     container: 'potato-container',
     wrapper: [{ name: 'wrapper' }, 'wrapper--potato'],
@@ -15,7 +15,7 @@ test('returns the same object keyed with "__classes"', () => {
     return useCustomClasses(callback)
   })
 
-  expect(result.current.__classes).toBe(SYMBOL_CUSTOM_CLASSES)
+  expect(result.current.__useCustomClasses).toBe(SYMBOL_CUSTOM_CLASSES)
   expect(result.current).toMatchObject(obj)
   expect(callback).toHaveBeenCalledTimes(1)
 })

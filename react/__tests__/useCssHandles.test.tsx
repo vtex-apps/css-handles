@@ -140,8 +140,7 @@ describe('custom classes', () => {
         element6: ['a', { name: 'b' }],
         element7: ['a', 'b'],
         element8: [{ name: 'a' }, { name: 'b' }],
-        // @ts-expect-error not public
-        __classes: SYMBOL_CUSTOM_CLASSES,
+        __useCustomClasses: SYMBOL_CUSTOM_CLASSES,
       },
     })
 
@@ -218,13 +217,18 @@ describe('withModifiers', () => {
 
   it('should apply modifiers only on custom classes with applyModifiers', () => {
     const CSS_HANDLES = ['handle1', 'handle2', 'handle3'] as const
-    const classes = {
-      handle1: 'customClass',
-      handle2: ['customClass', { name: 'anotherClass', applyModifiers: true }],
-      handle3: { name: 'customClass', applyModifiers: true },
-    }
 
-    const { withModifiers } = useCssHandles(CSS_HANDLES, { classes })
+    const { withModifiers } = useCssHandles(CSS_HANDLES, {
+      classes: {
+        handle1: 'customClass',
+        handle2: [
+          'customClass',
+          { name: 'anotherClass', applyModifiers: true },
+        ],
+        handle3: { name: 'customClass', applyModifiers: true },
+        __useCustomClasses: SYMBOL_CUSTOM_CLASSES,
+      },
+    })
 
     const handle1 = withModifiers('handle1', 'mod')
     const handle2 = withModifiers('handle2', 'mod')

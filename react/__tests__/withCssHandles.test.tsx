@@ -5,22 +5,9 @@ import withCssHandles from '../withCssHandles'
 import { useExtension } from '../hooks/useExtension'
 import type {
   CssHandlesList,
-  CssHandles,
+  CssHandleProps,
   CssHandlesOptions,
 } from '../CssHandlesTypes'
-
-interface Props<T extends CssHandlesList> {
-  cssHandles: CssHandles<T>
-}
-
-const ExampleComponent: FC<Props<any>> = ({ cssHandles }) => {
-  return (
-    <div
-      data-testid="test-div"
-      className={Object.values(cssHandles).join(' ')}
-    />
-  )
-}
 
 jest.mock('../hooks/useExtension', () => ({
   useExtension: jest.fn(() => ({
@@ -36,10 +23,18 @@ describe('withCssHandles', () => {
     handlesNames: CssHandlesList,
     options?: CssHandlesOptions<any>
   ) => {
-    const EnhancedComponent = withCssHandles<
-      typeof handlesNames,
-      Props<typeof handlesNames>
-    >(
+    type InternalProps = CssHandleProps<typeof handlesNames>
+
+    const ExampleComponent: FC<InternalProps> = ({ cssHandles }) => {
+      return (
+        <div
+          data-testid="test-div"
+          className={Object.values(cssHandles).join(' ')}
+        />
+      )
+    }
+
+    const EnhancedComponent = withCssHandles<typeof handlesNames>(
       handlesNames,
       options
     )(ExampleComponent)

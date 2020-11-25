@@ -1,16 +1,20 @@
 import { useMemo } from 'react'
 
+import { CustomClasses, CssHandlesList } from './CssHandlesTypes'
+
 export const SYMBOL_CUSTOM_CLASSES: unique symbol = Symbol('customClasses')
 
-const useCustomClasses = <T>(classes: () => T, deps: unknown[] = []): T => {
+const useCustomClasses = <T extends CssHandlesList>(
+  classes: () => Omit<CustomClasses<T>, '__useCustomClasses'>,
+  deps: unknown[] = []
+): CustomClasses<T> => {
   // we know what we're doing *wink wink*
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const memo = useMemo(classes, deps)
+  const memo = useMemo(classes, deps) as CustomClasses<T>
 
-  // __classes is added to guarantee that consumers will use this hooks
+  // __useCustomClasses is added to guarantee that consumers will use this hooks
   // instead of just passing a new object at every render
-  // @ts-expect-error - non public API
-  memo.__classes = SYMBOL_CUSTOM_CLASSES
+  memo.__useCustomClasses = SYMBOL_CUSTOM_CLASSES
 
   return memo
 }
