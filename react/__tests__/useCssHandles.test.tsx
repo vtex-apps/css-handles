@@ -18,6 +18,7 @@ jest.mock('../hooks/useExtension', () => ({
 
 jest.useFakeTimers()
 
+const mockedUseExtension = useExtension as jest.Mock
 const consoleError = jest.spyOn(console, 'error').mockImplementation()
 
 describe('basic usage', () => {
@@ -35,7 +36,7 @@ describe('basic usage', () => {
   it('should not apply blockClasses if not available', () => {
     const CSS_HANDLES = ['element1', 'element2']
 
-    ;(useExtension as any).mockImplementationOnce(() => ({
+    mockedUseExtension.mockImplementationOnce(() => ({
       component: 'vtex.app@2.1.0',
       props: {},
     }))
@@ -51,7 +52,7 @@ describe('basic usage', () => {
   it('make invalid class names be transformed to empty strings', () => {
     const CSS_HANDLES = ['element1', 'element-2', 'element+3', '4element']
 
-    ;(useExtension as any).mockImplementationOnce(() => ({
+    mockedUseExtension.mockImplementationOnce(() => ({
       component: 'vtex.app@2.1.0',
       props: {},
     }))
