@@ -239,4 +239,21 @@ describe('withModifiers', () => {
     expect(handle2).toBe('customClass anotherClass anotherClass--mod')
     expect(handle3).toBe('customClass customClass--mod')
   })
+
+  it('should apply modifier on all passed classes in the same name', () => {
+    const CSS_HANDLES = ['handle1', 'handle2', 'handle3'] as const
+
+    const { withModifiers } = useCssHandles(CSS_HANDLES, {
+      classes: {
+        handle1: { name: 'customClass1 customClass2', applyModifiers: true },
+        __useCustomClasses: SYMBOL_CUSTOM_CLASSES,
+      },
+    })
+
+    const handle1 = withModifiers('handle1', 'mod')
+
+    expect(handle1).toBe(
+      'customClass1 customClass2 customClass1--mod customClass2--mod'
+    )
+  })
 })

@@ -2,7 +2,12 @@ import { SYMBOL_CUSTOM_CLASSES } from './useCustomClasses'
 
 export type ValuesOf<T extends readonly unknown[]> = T[number]
 
-type CustomClassItem = string | { name: string; applyModifiers?: boolean }
+type CustomClassItem =
+  | string
+  | {
+      name: string
+      applyModifiers?: boolean
+    }
 
 export type CssHandlesList = readonly string[]
 

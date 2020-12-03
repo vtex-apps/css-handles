@@ -16,10 +16,12 @@ export function computeCustomClassValue(customClass: CustomClassValue) {
         return acc
       }
 
-      acc.classNames.push(className.name)
+      const names = className.name.split(' ')
+
+      acc.classNames.push(...names)
 
       if (className.applyModifiers) {
-        acc.toApplyModifiers.push(className.name)
+        acc.toApplyModifiers.push(...names)
       }
 
       return acc

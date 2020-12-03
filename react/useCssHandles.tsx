@@ -115,6 +115,9 @@ const useCssHandles = <T extends CssHandlesList>(
       }
 
       Object.keys(handlesOverride).forEach((handleName: ValuesOf<T>) => {
+        // the secret symbol can be safely ignored here
+        if (handleName === '__useCustomClasses') return
+
         // side-effect to remove handles that we don't need to generate full names
         handlesSet.delete(handleName)
 
