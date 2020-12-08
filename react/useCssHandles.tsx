@@ -1,23 +1,31 @@
 import { useMemo } from 'react'
+
 import { useExtension } from './hooks/useExtension'
+import {
+  computeCustomClassValue,
+  ComputedCustomClass,
+} from './modules/customClasses'
+import { validateModifier } from './modules/modifier'
 import applyModifiers from './applyModifiers'
+import { SYMBOL_CUSTOM_CLASSES } from './useCustomClasses'
+import type {
+  CssHandlesList,
+  CssHandles,
+  CssHandlesOptions,
+  ValuesOf,
+  CssHandlesBag,
+  CustomClassValue,
+} from './CssHandlesTypes'
+
+const VALID_CSS_HANDLE_PATTERN = /^[^\d][\w-]+$/
+const APP_NAME_PATTERN = /([^.]+)\.([^@]+)@(\d+)/
 
 /** Verifies if the handle contains only letters, numbers and -, and does not begin with a number  */
-const validateCssHandle = (handle: string) => !/^\d|[^A-z0-9-]/.test(handle)
+const validateCssHandle = (handle: string) =>
+  VALID_CSS_HANDLE_PATTERN.test(handle)
 
 const parseComponentName = (componentName: string) => {
-  /* Matches until the first `.` or `@`.
-   * Used to split something like `vtex.style-guide@2.0.1` into
-   * `vtex`, `style-guide`, and `2`. */
-  const splitAppName = /[^@.]+/g
-
-  /* regex.exec is stateful, this is why running the command 3 times
-   * provides 3 different results. Yeah I know.
-   * There exists a `String.matchAll()` function but it's not
-   * supported on Safari */
-  const [vendor] = splitAppName.exec(componentName) || [null]
-  const [name] = splitAppName.exec(componentName) || [null]
-  const [major] = splitAppName.exec(componentName) || [null]
+  const [, vendor, name, major] = componentName.match(APP_NAME_PATTERN) ?? []
 
   return { vendor, name, major }
 }
@@ -25,17 +33,22 @@ const parseComponentName = (componentName: string) => {
 const normalizeComponentName = (componentName: string) => {
   const { vendor, name, major } = parseComponentName(componentName)
 
-  return vendor && name && major && `${vendor}-${name}-${major}-x`
+  if (vendor && name && major) {
+    return `${vendor}-${name}-${major}-x`
+  }
+
+  return null
 }
 
-const generateCssHandles = <T extends CssHandlesInput>(
+const generateCssHandles = <T extends CssHandlesList>(
   namespace: string,
   handles: T,
   modifiers?: string | string[]
 ) => {
-  return handles.reduce<Record<string, string>>((acc, handle) => {
+  return handles.reduce((acc, handle: ValuesOf<T>) => {
     const isValid = !!namespace && validateCssHandle(handle)
     const transformedHandle = `${namespace}-${handle}`
+
     acc[handle] = isValid
       ? modifiers
         ? applyModifiers(transformedHandle, modifiers)
@@ -49,7 +62,7 @@ const generateCssHandles = <T extends CssHandlesInput>(
     }
 
     return acc
-  }, {}) as CssHandles<T>
+  }, {} as CssHandles<T>)
 }
 
 /**
@@ -59,20 +72,24 @@ const generateCssHandles = <T extends CssHandlesInput>(
  * object with generated css class names, e.g.
  * { foo: 'vendor-appname-1-x-foo', bar: 'vendor-appname-1-x-bar' }.
  */
-const useCssHandles = <T extends CssHandlesInput>(
-  handles: T,
-  options: CssHandlesOptions = {}
-): CssHandles<T> => {
+const useCssHandles = <T extends CssHandlesList>(
+  handleList: T,
+  options: CssHandlesOptions<T> = {}
+): CssHandlesBag<T> => {
   const extension = useExtension()
 
-  const { props = {}, component = '' } = extension || {}
+  const { props = {}, component = '' } = extension ?? {}
   const blockClass = props.cssHandle || props.blockClass
+  const { migrationFrom, classes: handlesOverride } = options
 
-  const values = useMemo<CssHandles<T>>(() => {
-    const { migrationFrom } = options
+  const values = useMemo<CssHandlesBag<T>>(() => {
     const normalizedComponent = normalizeComponentName(component)
 
     const namespaces = normalizedComponent ? [normalizedComponent] : []
+    const handlesSet = new Set<ValuesOf<T>>(handleList)
+    const handles = {} as CssHandles<T>
+    const computedCustomClasses = new Map<ValuesOf<T>, ComputedCustomClass>()
+
     if (migrationFrom) {
       const migrations = Array.isArray(migrationFrom)
         ? migrationFrom
@@ -81,27 +98,107 @@ const useCssHandles = <T extends CssHandlesInput>(
       const normalizedMigrations = migrations
         .map(normalizeComponentName)
         .filter(
-          current => !!current && current !== normalizedComponent
+          (current) => !!current && current !== normalizedComponent
         ) as string[]
 
       namespaces.push(...normalizedMigrations)
     }
 
-    return namespaces
-      .map(component => generateCssHandles(component, handles, blockClass))
-      .reduce<CssHandles<T>>(
-        (acc: null | CssHandles<T>, cur: CssHandles<T>) => {
-          if (!acc) {
-            return cur
-          }
-          Object.keys(cur).forEach((key: ValueOf<T>) => {
-            acc[key] = `${acc[key]} ${cur[key]}`
-          })
-          return acc
-        },
-        undefined as any
+    if (handlesOverride) {
+      if (
+        process.env.NODE_ENV === 'development' &&
+        handlesOverride.__useCustomClasses !== SYMBOL_CUSTOM_CLASSES
+      ) {
+        throw new Error(
+          "[css-handles] Invalid 'classes' option. Use the 'useCustomClasses' hook to generate a valid 'classes' object."
+        )
+      }
+
+      Object.keys(handlesOverride).forEach((handleName: ValuesOf<T>) => {
+        // the secret symbol can be safely ignored here
+        if (handleName === '__useCustomClasses') return
+
+        // side-effect to remove handles that we don't need to generate full names
+        handlesSet.delete(handleName)
+
+        const computedCustomClass = computeCustomClassValue(
+          handlesOverride[handleName] as Required<CustomClassValue>
+        )
+
+        handles[handleName] = computedCustomClass.classNames.join(' ')
+        computedCustomClasses.set(handleName, computedCustomClass)
+      })
+    }
+
+    // `handlesToGenerate` are handles that were not overriden by classes
+    const handlesToGenerate = [...handlesSet]
+
+    namespaces.forEach((componentName) => {
+      const namespaceHandles = generateCssHandles(
+        componentName,
+        handlesToGenerate,
+        blockClass
       )
-  }, [blockClass, component, handles, options])
+
+      Object.keys(namespaceHandles).forEach((key: ValuesOf<T>) => {
+        if (key in handles) {
+          handles[key] = `${handles[key]} ${namespaceHandles[key]}`
+        } else {
+          handles[key] = namespaceHandles[key]
+        }
+      })
+    })
+
+    const withModifiers = (id: ValuesOf<T>, modifier: string | string[]) => {
+      const normalizedModifiers =
+        typeof modifier === 'string' ? [modifier] : modifier
+
+      if (!Array.isArray(normalizedModifiers)) {
+        console.error(
+          'Invalid modifier type on `withModifier`. Please use either a string or an array of strings'
+        )
+
+        return handles[id]
+      }
+
+      let baseClassNames: string[] = []
+      let classesToApplyModifiers: string[] = []
+
+      const computedCustomClass = computedCustomClasses.get(id)
+
+      if (computedCustomClass) {
+        baseClassNames = computedCustomClass.classNames
+        classesToApplyModifiers = computedCustomClass.toApplyModifiers
+      } else {
+        baseClassNames = handles[id].split(' ')
+        classesToApplyModifiers = baseClassNames
+      }
+
+      const modifiedClasses = normalizedModifiers
+        .map((currentModifier) => {
+          const isValid = validateModifier(currentModifier)
+
+          if (!isValid) {
+            return ''
+          }
+
+          return classesToApplyModifiers
+            .map((className) => `${className}--${currentModifier}`)
+            .join(' ')
+            .trim()
+        })
+        .filter((l) => l.length > 0)
+        .join(' ')
+        .trim()
+
+      return baseClassNames.concat(modifiedClasses).join(' ').trim()
+    }
+
+    return {
+      handles,
+      withModifiers,
+    }
+  }, [blockClass, component, handleList, migrationFrom, handlesOverride])
 
   return values
 }

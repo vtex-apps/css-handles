@@ -1,20 +1,25 @@
-import React from 'react'
+import React, { ComponentType } from 'react'
+
 import useCssHandles from './useCssHandles'
-import { ComponentType } from 'react'
+import type {
+  CssHandlesList,
+  CssHandlesOptions,
+  CssHandlesBag,
+} from './CssHandlesTypes'
 
-const withCssHandles = <T extends CssHandlesInput, ComponentProps>(
+// eslint-disable-next-line @typescript-eslint/ban-types
+const withCssHandles = <T extends CssHandlesList, Props = {}>(
   handles: T,
-  options?: CssHandlesOptions
-) => (
-  Component: ComponentType<ComponentProps & { cssHandles: CssHandles<T> }>
-) => {
-  const EnhancedComponent = (props: ComponentProps) => {
-    const cssHandles = useCssHandles(handles, options)
+  options?: CssHandlesOptions<T>
+) => (Component: ComponentType<Props & CssHandlesBag<T>>) => {
+  const EnhancedComponent = (props: Props) => {
+    const handlesBag = useCssHandles(handles, options)
 
-    return <Component cssHandles={cssHandles} {...props} />
+    return <Component {...props} {...handlesBag} />
   }
 
-  const displayName = Component.displayName || Component.name || 'Component'
+  const displayName = Component.displayName ?? Component.name ?? 'Component'
+
   EnhancedComponent.displayName = `withCssHandles(${displayName})`
 
   return EnhancedComponent

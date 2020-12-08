@@ -1,8 +1,11 @@
 {
-  "extends": "vtex-react",
-  "env": {
-    "browser": true,
-    "es6": true,
-    "jest": true
-  }
+  "extends": "vtex-react/io",
+  "overrides": [
+    {
+      "files": ["__tests__/**/*"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    }
+  ]
 }

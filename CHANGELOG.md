@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- New `classes` parameter to the `useCssHandle` hook.
+- New `useCustomClasses` hook.
+- New `CssHandlesContext` provider and hook.
+
+### Changed
+- `useCssHandles` now returns a bag of utilities (`handles`, `withModifiers` for now).
+
+### Changed
+- Refactor CSS Handle name normalization and validation to a more performant method.
+
 ## [0.4.4] - 2020-08-31
 ### Changed
 - Modifier errors are only displayed on dev workspaces.
