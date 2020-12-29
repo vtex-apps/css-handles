@@ -208,13 +208,13 @@ import React from 'react'
 import { useCssHandles } from 'vtex.css-handles'
 
 import { CssHandlesProvider } from './cssHandlesContext'
-import { NestedPrivateComponent } from './NestedPrivateComponent'
+import { NestedPrivateComponent, CSS_HANDLES as NestedPrivateCssHandles } from './NestedPrivateComponent'
 
 /**
  * Solution: include the NestedPrivateComponent CSS handles in the
  * PublicAPIComponent API.
  */
-export const CSS_HANDLES = ['root', ...NestedPrivateComponent.cssHandles] as const
+export const CSS_HANDLES = ['root', ...NestedPrivateCssHandles] as const
 
 const PublicAPIComponent({ classes }) {
   const { handles, withModifiers } = useCssHandles(CSS_HANDLES, { classes })
@@ -243,7 +243,7 @@ import { useContextCssHandles } from './cssHandlesContext.ts'
  * Solution: if this component had another nested component, just merge the nested
  * component CSS Handles here, just like we did in PublicAPIComponent.
  */
-const CSS_HANDLES = ['nestedPublicHandle'] as const
+export const CSS_HANDLES = ['nestedPublicHandle'] as const
 
 const NestedPrivateComponent() {
   // Use the hook created by `createCssHandlesContext`
@@ -251,8 +251,6 @@ const NestedPrivateComponent() {
 
   return <div className={handles.nestedPublicHandle}>Nested Component</div>
 }
-
-NestedPrivateComponent.cssHandles = CSS_HANDLES
 
 export default NestedPrivateComponent
 ```
