@@ -267,3 +267,36 @@ const { CssHandlesProvider, useContextCssHandles } = createCssHandlesContext(
 
 export { CssHandlesProvider, useContextCssHandles }
 ```
+
+#### How to mock the CSS Handles context in nested components
+
+If you want to test the `NestedPrivateComponent` in the example above, there will be an error because the CSS Handles context is not present in the tree. You can mock the module with the `useContextCssHandles` hook like so:
+
+```tsx
+import React from 'react'
+import { render } from '@vtex/test-tools/react'
+
+import NestedPrivateComponent, {
+  CSS_HANDLES,
+} from '../components/NestedPrivateComponent'
+import { useContextCssHandles } from '../modules/cssHandles'
+
+jest.mock('../modules/cssHandlesContext', () => ({
+  useContextCssHandles: jest.fn(),
+}))
+
+const mockedUseContextCssHandles = useContextCssHandles as jest.Mock<
+  ReturnType<typeof useContextCssHandles>
+>
+
+mockedUseContextCssHandles.mockImplementation(() => ({
+  handles: CSS_HANDLES.reduce<Record<string, string>>((acc, handle) => {
+    acc[handle] = handle
+
+    return acc
+  }, {}),
+  withModifiers: (handle, modifier) => `${handle} ${handle}--${modifier}`,
+}))
+
+// test code here
+```
