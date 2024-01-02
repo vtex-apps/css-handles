@@ -78,8 +78,8 @@ const useCssHandles = <T extends CssHandlesList>(
 ): CssHandlesBag<T> => {
   const extension = useExtension()
 
-  const { props = {}, component = '' } = extension ?? {}
-  const blockClass = props.cssHandle || props.blockClass
+  const { content = {}, props = {}, component = '' } = extension ?? {}
+  const blockClass = props.cssHandle || content.blockClass || props.blockClass
   const { migrationFrom, classes: handlesOverride } = options
 
   const values = useMemo<CssHandlesBag<T>>(() => {
