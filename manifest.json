@@ -1,7 +1,7 @@
 {
   "vendor": "vtex",
   "name": "css-handles",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "title": "CSS Handles",
   "description": "Utility for creating CSS Handles on store components",
   "builders": {
